@@ -1,4 +1,5 @@
 //!   gcc -o game basico.c -lallegro -lallegro_image -lallegro_primitives -lallegro_font -lallegro_ttf -lm -lpthread -ldl -lstdc++
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
@@ -6,184 +7,11 @@
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 
-#define X_SCREEN 840
-#define Y_SCREEN 680
-#define BULLET_SPEED 20
-#define AVIAO_VELOCIDADE 4.0
-#define BULLET_SPEED_inimigos 10
-
-typedef struct
-{
-    float x, y;
-    int hits;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} Boss1;
-
-typedef struct
-{
-    float x, y;
-    int hits;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} Boss2;
-
-typedef struct
-{
-    float x, y;
-    int hits;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} Bomba;
-
-typedef struct
-{
-    float x, y;
-    int hits;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} AviaoInimigoVertical;
-
-typedef struct
-{
-    float x, y;
-    int hits;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} AviaoInimigoHorizontal;
-
-typedef struct
-{
-    float x, y;
-    bool active;
-} BulletInimigo;
-
-typedef struct
-{
-    float x, y;
-    bool active;
-    int hits;
-    int altura;
-    int largura;
-    ALLEGRO_BITMAP *bitmap;
-} jogador;
-
-typedef struct
-{
-    float x, y;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} Coracao;
+#include "geral.h"
+#include "viloes.h"
+#include "jogador.h"
 
 
-typedef struct
-{
-    float x, y;
-    int altura;
-    int largura;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} item;
-
-typedef struct
-{
-    float x, y;
-    int altura;
-    int largura;
-    bool active;
-    ALLEGRO_BITMAP *bitmap;
-} Bullet;
-
-void atira(int sprite_width, int sprite_height, Bullet bullets[], int x, int y)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        if (!bullets[i].active)
-        {
-            bullets[i].x = x + sprite_width;
-            bullets[i].y = y + sprite_height / 2 - 2;
-            bullets[i].active = true;
-            break;
-        }
-    }
-}
-
-void atiraInimigo(int sprite_width, int sprite_height, Bullet bullets[], int x, int y)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        bullets[i].x = x + sprite_width;
-        bullets[i].y = y + sprite_height / 2 - 2;
-        bullets[i].active = true;
-        break;
-    }
-}
-
-
-void atiraInimigo_vertical(int sprite_width, int sprite_height, Bullet bullets[], int x, int y)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        if (!bullets[i].active) {  // Encontra um projétil inativo
-            bullets[i].x = x + sprite_width / 2 - 2; // Centraliza o tiro no meio do sprite
-            bullets[i].y = y -300;        // Começa logo abaixo do inimigo
-            bullets[i].active = true;               // Ativa o projétil
-            break;                                  // Dispara apenas um por vez
-        }
-    }
-}
-void atiraInimigo_verticalv2(int sprite_width, int sprite_height, Bullet bullets[], int x, int y)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        if (!bullets[i].active) {  // Encontra um projétil inativo
-            bullets[i].x = x + sprite_width / 2 - 2; // Centraliza o tiro no meio do sprite
-            bullets[i].y = y ;        // Começa logo abaixo do inimigo
-            bullets[i].active = true;               // Ativa o projétil
-            break;                                  // Dispara apenas um por vez
-        }
-    }
-}
-
-
-void inicializar_jogo(void)
-{
-    if (!al_init())
-    {
-        printf("Falha ao inicializar o Allegro!\n");
-        return;
-    }
-
-    if (!al_init_image_addon())
-    {
-        printf("Falha ao inicializar o addon de imagens!\n");
-        return;
-    }
-
-    if (!al_init_primitives_addon())
-    {
-        printf("Falha ao inicializar o addon de primitivas!\n");
-        return;
-    }
-
-    if (!al_install_keyboard())
-    {
-        printf("Falha ao instalar o teclado!\n");
-        return;
-    }
-
-    if (!al_init_font_addon())
-    {
-        printf("Falha ao inicializar o addon de fontes.\n");
-        return;
-    }
-
-    if (!al_init_ttf_addon())
-    {
-        printf("Falha ao inicializar o addon TTF.\n");
-        return;
-    }
-}
 
 void reset_game(jogador *sprite, Bomba *bomba, AviaoInimigoVertical *Aviao1)
 {
@@ -200,21 +28,6 @@ void reset_game(jogador *sprite, Bomba *bomba, AviaoInimigoVertical *Aviao1)
     Aviao1->active = true;
 }
 
-
-bool verificarColisao(int x1, int y1, int largura1, int altura1, int x2, int y2, int largura2, int altura2) {
-    return (x1 < x2 + largura2 && x1 + largura1 > x2 &&
-            y1 < y2 + altura2 && y1 + altura1 > y2);
-}
-
-
-
-
-void atira_transv(int sprite_width, int sprite_height, Bullet bullets[], int x, int y, ALLEGRO_FONT *font)
-{
-    al_draw_text(font, al_map_rgb(255, 255, 255), 400, 300, ALLEGRO_ALIGN_CENTRE, "Atira Longo");
-}
-
-
 //!  --------------------------------------------------------------  COMEÇO DO JOGO ----------------------------------------------------------------
 
 int main()
@@ -227,14 +40,10 @@ int main()
         printf("Falha ao criar a janela!\n");
         return -1;
     }
-    ALLEGRO_FONT *font = al_load_font("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 36, 0);
-    if (!font)
-    {
-        printf("Falha ao carregar a fonte.\n");
-        al_destroy_display(display);
-        return -1;
-    }
-
+    ALLEGRO_FONT *font = al_load_font("DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 36, 0);
+  
+  ALLEGRO_FONT *font2 = al_load_font("DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 22, 0);
+  
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     if (!queue)
     {
@@ -254,7 +63,7 @@ int main()
 
     //! -------------------------------------------------------------JOGADOR --------------------------------------------------
     jogador sprite;
-    sprite.bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/Cruiser2_42x61.png");
+    sprite.bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
 
     int sprite_width = al_get_bitmap_width(sprite.bitmap);
     int sprite_height = al_get_bitmap_height(sprite.bitmap);
@@ -266,63 +75,61 @@ int main()
 
     float speed = 8.0;
 
+    jogador auxiliar1;
+    auxiliar1.bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
+
+    int auxiliar1_width = al_get_bitmap_width(auxiliar1.bitmap);
+    int auxiliar1_heig = al_get_bitmap_height(auxiliar1.bitmap);
+
+    float x_auxiliar1 = -20;
+    float y_auxiliar1 = ((Y_SCREEN - sprite_height) / 2)-100;
+    auxiliar1.altura = auxiliar1_width;
+    auxiliar1.largura = auxiliar1_width;
+
+
+    //!tiros amigos
     Bullet bullets[5] = {{0}};
+    Bullet especial[5] = {{0}};
+    Bullet especial2[5] = {{0}};
 
-    
+    //!tiros inimigos
     Bullet bullets_inimigos[5] = {{0}};
-
     Bullet bullets_inimigos2[5] = {{0}};
+    Bullet tiros_v1[5];
+    Bullet tiros_v1_2[5];
+    Bullet tiros_v1_vertical[5];
+    
     for(int j =0; j<5; j++){
-
-        bullets[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
-        bullets_inimigos[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
-        bullets_inimigos2[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
+        bullets[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        bullets_inimigos[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        bullets_inimigos2[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        especial[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        especial2[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
         bullets_inimigos[j].altura = 15;
         bullets_inimigos[j].largura = 30;
         bullets_inimigos2[j].largura = 30;
         bullets_inimigos2[j].altura = 15;
         bullets[j].largura = 30;
         bullets[j].altura = 15;
-    
+        especial2[j].largura = 30;
+        especial[j].altura = 15;
+        tiros_v1[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        tiros_v1_2[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
+        tiros_v1_vertical[j].bitmap = al_load_bitmap("SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
     }
 
     //! ----------------------------------------------INIMIGOS --------------------------------------------------
-    Boss1 vilao1;
-    vilao1.bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/Flash_10_80x110.png");
-    if (!vilao1.bitmap)
-    {
-        printf("Falha ao carregar a sprite da bomba!\n");
-        al_destroy_bitmap(sprite.bitmap);
-        al_destroy_display(display);
-        return -1;
-    }
+    Boss vilao1;
+    vilao1.bitmap = al_load_bitmap("SpaceShipSamples/Flash_10_80x110.png");
 
     vilao1.x = X_SCREEN - 100;
     vilao1.y = (Y_SCREEN - al_get_bitmap_height(vilao1.bitmap)) / 2;
     vilao1.hits = 0;
     vilao1.active = true;
 
-    Bullet tiros_v1[5];
-    Bullet tiros_v1_2[5];
-    Bullet tiros_v1_vertical[5];
-    for(int j =0; j<5; j++){
 
-        tiros_v1[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
-        tiros_v1_2[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
-        tiros_v1_vertical[j].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/salvo/git/SPACE_INVEDORS_C/SpaceShipSamples/cor.png");
-
-    
-    }
-
-    Boss2 vilao2;
-    vilao2.bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/Magicfly_47x65.png");
-    if (!vilao2.bitmap)
-    {
-        printf("Falha ao carregar a sprite da bomba!\n");
-        al_destroy_bitmap(sprite.bitmap);
-        al_destroy_display(display);
-        return -1;
-    }
+    Boss vilao2;
+    vilao2.bitmap = al_load_bitmap("SpaceShipSamples/Fear_A_Shadow_100x100.png");
 
     vilao2.x = X_SCREEN - 100;
     vilao2.y = (Y_SCREEN - al_get_bitmap_height(vilao2.bitmap)) / 2;
@@ -330,14 +137,7 @@ int main()
     vilao2.active = true;
 
     Bomba bomba;
-    bomba.bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/UFO_PlasmaShield_Pink_69x69.png");
-    if (!bomba.bitmap)
-    {
-        printf("Falha ao carregar a sprite da bomba!\n");
-        al_destroy_bitmap(sprite.bitmap);
-        al_destroy_display(display);
-        return -1;
-    }
+    bomba.bitmap = al_load_bitmap("SpaceShipSamples/Magicfly_47x65.png");
 
     bomba.x = X_SCREEN - 100;
     bomba.y = (Y_SCREEN - al_get_bitmap_height(bomba.bitmap)) / 2;
@@ -347,13 +147,6 @@ int main()
 
     Bomba bomba2;
     bomba2.bitmap = al_load_bitmap("SpaceShipSamples/Buggy_Black_63x69.png");
-    if (!bomba2.bitmap)
-    {
-        printf("Falha ao carregar a sprite da bomba2!\n");
-        al_destroy_bitmap(sprite.bitmap);
-        al_destroy_display(display);
-        return -1;
-    }
 
     bomba2.x = X_SCREEN - 50;
     bomba2.y = 50 + ((Y_SCREEN - al_get_bitmap_height(bomba2.bitmap)) / 2);
@@ -361,15 +154,7 @@ int main()
     bomba2.active = true;
 
     AviaoInimigoVertical Aviao1;
-    Aviao1.bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/Scorpion_Evo_112x102.png");
-    if (!Aviao1.bitmap)
-    {
-        printf("Falha ao carregar a sprite do avião inimigo!\n");
-        al_destroy_bitmap(sprite.bitmap);
-        al_destroy_bitmap(bomba.bitmap);
-        al_destroy_display(display);
-        return -1;
-    }
+    Aviao1.bitmap = al_load_bitmap("SpaceShipSamples/Scorpion_Evo_112x102.png");
     Aviao1.x = X_SCREEN - 100;
     Aviao1.y = (Y_SCREEN - al_get_bitmap_height(Aviao1.bitmap)) / 1.5;
     Aviao1.hits = 0;
@@ -377,18 +162,14 @@ int main()
 
 
     AviaoInimigoVertical Aviao2;
-    Aviao2.bitmap = al_load_bitmap("SpaceShipSamples/Fear_A_Shadow_100x100.png");
-
+    Aviao2.bitmap = al_load_bitmap("SpaceShipSamples/TinyCruiser_Ice_64x64.png");
     Aviao2.x = X_SCREEN - 100;
     Aviao2.y = (Y_SCREEN/2)-100;
     Aviao2.hits = 0;
     Aviao2.active = true;
 
-
-
     AviaoInimigoVertical Aviao3;
     Aviao3.bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
-
     Aviao3.x = X_SCREEN + 100;
     Aviao3.y = (Y_SCREEN/2)-100;
     Aviao3.hits = 0;
@@ -396,13 +177,13 @@ int main()
 
     AviaoInimigoVertical Aviao4;
     Aviao4.bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
-
     Aviao4.x = X_SCREEN + 100;
     Aviao4.y = (Y_SCREEN/2)+100;
     Aviao4.hits = 0;
     Aviao4.active = true;
 
    //! _________________________________________________________________ ITEMS _______________________________________________
+
     item tiro_longo_map;
     tiro_longo_map.bitmap = al_load_bitmap("SpaceShipSamples/busssLight.png");
     
@@ -411,9 +192,9 @@ int main()
     tiro_longo_map.active = true;
 
     Coracao cor1[3];
-    cor1[0].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/cor.png");
-    cor1[1].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/cor.png");
-    cor1[2].bitmap = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/cor.png");
+    cor1[0].bitmap = al_load_bitmap("SpaceShipSamples/cor.png");
+    cor1[1].bitmap = al_load_bitmap("SpaceShipSamples/cor.png");
+    cor1[2].bitmap = al_load_bitmap("SpaceShipSamples/cor.png");
     cor1[0].x = X_SCREEN-100;
     cor1[0].y = 20;
     cor1[0].active = true;
@@ -426,18 +207,21 @@ int main()
 
     //! ----------------------------------------------CONFIGURAÇÕES DOS ELEMENTOS GERAL --------------------------------------------------
 
-    ALLEGRO_BITMAP *fundo = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
-    ALLEGRO_BITMAP *fundo2 = al_load_bitmap("SpaceShipSamples/f.png");
-
+    ALLEGRO_BITMAP *fundo = al_load_bitmap("SpaceShipSamples/toystoynuvens.jpg");
+    ALLEGRO_BITMAP *zurc = al_load_bitmap("SpaceShipSamples/zurg.jpeg");
+    ALLEGRO_BITMAP *zurc_icon = al_load_bitmap("SpaceShipSamples/zzz.png");
+    ALLEGRO_BITMAP *buzz = al_load_bitmap("SpaceShipSamples/busssLight.png");
+    ALLEGRO_BITMAP *alien = al_load_bitmap("SpaceShipSamples/alien.png");
+    
     ALLEGRO_BITMAP *carrossel1[3];
     carrossel1[0] = al_load_bitmap("SpaceShipSamples/f.png");
     carrossel1[1] = al_load_bitmap("SpaceShipSamples/f.png");
     carrossel1[2] = al_load_bitmap("SpaceShipSamples/f.png");
 
     ALLEGRO_BITMAP *carrossel[3];
-    carrossel[0] = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
-    carrossel[1] = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
-    carrossel[2] = al_load_bitmap("/home/gabriel/Documentos/PROG 2/Fase 3 - Implementando movimentação e colisão/SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
+    carrossel[0] = al_load_bitmap("SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
+    carrossel[1] = al_load_bitmap("SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
+    carrossel[2] = al_load_bitmap("SpaceShipSamples/pngtree-digital-game-background-picture-image_1598113.png");
 
     float pos_x[3] = {0, X_SCREEN, X_SCREEN * 2};
     float velocidade = 2.0f;
@@ -457,69 +241,110 @@ int main()
     char pont[100];
 
     bool inicio = false;
-    int confirmacao = 0;
     int ps = 2;
     int mov = 1;
     int fase = 1;
-    int cont_tiros = 0;
     int pontuacao = 0;
     float coracao_altura = 30.0;
     float coracao_largura = 30.0;
-    bool pode_atirar[4];
     int ppower=0;
+    int ppower2=0;
     int mov_v1 = 1;
     int mov_v2 = 1;
     int bomba_mov =0;
-    bool tiro_transv = false;
-    int permissao_transv =0;
-    int controler_tiros_especiais =0;
-    int permissao_longo =0;
-    int tiro_longo = false;
+    int tiro_transv = 0;
+    int ctln_transversal=0;
+    int ctln_longo=2;
+    int tiro_longo = 0;
     int final =0;
     int ctnl_vilao2 =0;
     int ctnl_tiros_vertical_v2=false;
     ALLEGRO_EVENT event;
     bool morreu = false;
-    int p=0;
-
-
-
-int primeira_fase_comeco = 15; // A fase começa no segundo 1
-int final_horizontal = primeira_fase_comeco + 9; // 1-10: Vilão atira horizontalmente
-int final_branco = final_horizontal + 1;        // 11: Tela branca
-int final_com_vertical = final_branco + 9;      // 12-20: Vilão atira verticalmente
-int final_branco2 = final_com_vertical + 1;     // 21: Tela branca
-int final_horizontal2 = final_branco2 + 9;      // 22-30: Vilão atira horizontalmente
-int final_branco3 = final_horizontal2 + 1;      // 31: Tela branca
-int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalmente
-
-    while (running)
-    {
+    int primeira_fase_comeco = 10; //! A fase começa no segundo 1
+    int final_horizontal = primeira_fase_comeco + 9; //! 1-10: Vilão atira horizontalmente
+    int final_branco = final_horizontal + 1;        //! 11: Tela branca
+    int final_com_vertical = final_branco + 9;      //! 12-20: Vilão atira verticalmente
+    int final_branco2 = final_com_vertical + 1;     //! 21: Tela branca
+    int final_horizontal2 = final_branco2 + 9;      //! 22-30: Vilão atira horizontalmente
+    int final_branco3 = final_horizontal2 + 1;      //! 31: Tela branca
+    int final_vertical2 = final_branco3 + 9;        //! 32-40: Vilão atira verticalmente
+    int personagem =0;
+    int comeco=0;
+    int segundos_total=0;
+    int anima_seg=0;
+    while (running){
         al_wait_for_event(queue, &event);
 
         if (event.type == ALLEGRO_EVENT_TIMER)
         {
-            if (!inicio && morreu == false && fase== 1)
+
+            if (!inicio && morreu == false && fase== 1 && fase != 3  && comeco ==0){
             {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
 
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 300, ALLEGRO_ALIGN_CENTRE, "Pressione Space para começar!");
-                al_flip_display();
-            }
-                if (morreu == true && fase == 0)
+
+                al_draw_scaled_bitmap(buzz,0, 0,al_get_bitmap_width(buzz),al_get_bitmap_height(buzz),X_SCREEN-200, Y_SCREEN-200,200, 250, 0);
+                al_draw_filled_rounded_rectangle((X_SCREEN/2)-300,(Y_SCREEN/2)+65, (X_SCREEN)-200, (Y_SCREEN)+100, 10,10, al_map_rgb(1,1,1));
+
+                al_draw_filled_rounded_rectangle((X_SCREEN/2)-300,300, (X_SCREEN)-200, 200, 10,10, al_map_rgb(1,1,1));
+
+                al_draw_text(font2, al_map_rgb(255, 255, 255), 400, 450, ALLEGRO_ALIGN_CENTRE, "Zurc sequestrou uma de nossas ");
+                al_draw_text(font2, al_map_rgb(255, 255, 255), 400, 500, ALLEGRO_ALIGN_CENTRE, "equipes de reconhecimento");
+
+                al_draw_text(font2, al_map_rgb(255, 255, 255), 400, 550, ALLEGRO_ALIGN_CENTRE, "Vamos ter que salva-los!!!");
+
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 250, ALLEGRO_ALIGN_CENTRE, "Pressione Space");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "para começar!");
+
+                if (key_space)
                 {
+                    comeco = 1;
+                }
+                }
+                al_flip_display();
+
+            }
+
+            if (!inicio && comeco ==1&&morreu == false && fase== 1 && fase != 3)
+            {
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
+                al_draw_filled_rounded_rectangle((X_SCREEN/2)-300,(Y_SCREEN/2)-65, (X_SCREEN/2)+200, (Y_SCREEN/2)+100, 10,10, al_map_rgb(1,1,1));
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 300, ALLEGRO_ALIGN_CENTRE, "Pressione Space");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 350, ALLEGRO_ALIGN_CENTRE, "para começar!");
+
+                if (key_space)
+                {
+                    fase = 1;
+                    vilao1.hits=0;
+                    vilao2.hits=0;
+                    ctln_transversal =0;
+                }
+
+                al_flip_display();
+
+            }
+
+            if (morreu == true && fase == 0){
                     inicio = false;
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "Morreu");
 
+                al_draw_scaled_bitmap(zurc, 0, 0, al_get_bitmap_width(zurc), al_get_bitmap_height(zurc), 0, 0, X_SCREEN, Y_SCREEN, 0);
+                
+                al_draw_filled_rounded_rectangle(50,(Y_SCREEN/2)+30,X_SCREEN-50, (Y_SCREEN/2)+250, 10,10, al_map_rgb(1,1,1));
                 sprintf(pont, "Pontuação final: %d", pontuacao);
-                al_draw_text(font, al_map_rgb(255, 255, 255), 200, 300, 0, pont);
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 400, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 400, ALLEGRO_ALIGN_CENTRE, "Zurc vence novamente!");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 200, 450, 0, pont);
+                al_draw_text(font, al_map_rgb(255, 255, 255), 420, 500, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
                 reset_game(&sprite, &bomba, &Aviao1);
 
                 if (key_space)
                 {
+                    ctln_transversal =0;
+
                     inicio = true;
                     morreu = false;
                     pontuacao = 0;
@@ -529,6 +354,10 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     x = 10;
                     y = (Y_SCREEN - sprite_height) / 2;
                     fase = 1;
+
+                    vilao1.hits=0;
+                    vilao2.hits=0;
+
                 }
 
                 al_flip_display();
@@ -539,6 +368,9 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                 inicio = false;
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
+                al_draw_filled_rounded_rectangle((X_SCREEN/2)-100,Y_SCREEN-65, (X_SCREEN/2)+100, Y_SCREEN, 10,10, al_map_rgb(1,1,1));
+                al_draw_filled_rounded_rectangle(X_SCREEN-500,Y_SCREEN-60, X_SCREEN, Y_SCREEN, 10,10, al_map_rgb(225,225,210));
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "1 fase completada!");
 
                 sprintf(pont, "Pontuação atual: %d", pontuacao);
@@ -554,6 +386,10 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     inicio = true;
                     fase = 2;
                     morreu = false;
+
+                    vilao1.hits=0;
+                    vilao2.hits=0;
+
                 }
 
                 al_flip_display();
@@ -564,11 +400,18 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                 inicio = false;
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "Você venceu!");
+                al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
+                al_draw_scaled_bitmap(alien, 0, 0, al_get_bitmap_width(alien), al_get_bitmap_height(alien), 0, Y_SCREEN-200,300, 200, 0);
+
+                al_draw_filled_rounded_rectangle(50,200, X_SCREEN-50, 400, 10,10, al_map_rgb(1,1,1));
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "Você me salvou!");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 250, ALLEGRO_ALIGN_CENTRE, "Sou eternamente grato!");
+
+                al_draw_filled_rounded_rectangle(X_SCREEN-500,Y_SCREEN-60, X_SCREEN, Y_SCREEN, 10,10, al_map_rgb(225,225,210));
 
                 sprintf(pont, "Pontuação final: %d", pontuacao);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 200, 300, 0, pont);
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 400, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
+                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 350, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
                 reset_game(&sprite, &bomba, &Aviao1);
                 milisegundos = 0;
                 segundos = 0;
@@ -579,6 +422,10 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     fase = 1;
                     morreu = false;
                     pontuacao = 0;
+
+                    vilao1.hits=0;
+                    vilao2.hits=0;
+
                 }
 
                 al_flip_display();
@@ -632,14 +479,13 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     {
                         float escala_largura = (float)Y_SCREEN / al_get_bitmap_height(carrossel[i]) * al_get_bitmap_width(carrossel[i]);
 
-                        // Desenhar a imagem escalada
                         al_draw_scaled_bitmap(
                             carrossel[i],
-                            0, 0, // Origem no bitmap
+                            0, 0,
                             al_get_bitmap_width(carrossel[i]),
                             al_get_bitmap_height(carrossel[i]),
-                            pos_x[i], 0,              // Posição na tela
-                            escala_largura, Y_SCREEN, // Escala para a altura da tela
+                            pos_x[i], 0,           
+                            escala_largura, Y_SCREEN, 
                             0                         // Sem inversão
                         );
                     }
@@ -701,6 +547,20 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                         if (bullets[i].x > X_SCREEN)
                             bullets[i].active = false; // Desativa o tiro após sair da tela
                     }
+                    if (especial2[i].active)
+                    {
+                        especial2[i].x += BULLET_SPEED;
+                        especial2[i].y += BULLET_SPEED;
+                        if (especial2[i].x > X_SCREEN || especial2[i].y > Y_SCREEN)
+                            especial2[i].active = false; // Desativa o tiro após sair da tela
+                    }
+                    if (especial[i].active)
+                    {
+                        especial[i].x += BULLET_SPEED;
+                        especial[i].y -= BULLET_SPEED;
+                        if (especial[i].x > X_SCREEN || especial2[i].y <0)
+                            especial[i].active = false; // Desativa o tiro após sair da tela
+                    }
                     //!inimigos
                     if (bullets_inimigos[i].active && ctnl_tiros_vertical_v2 ==false)
                     {
@@ -741,7 +601,28 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
 
                 al_draw_bitmap(sprite.bitmap, x, y, 0);
 
-                
+
+
+                al_draw_filled_rounded_rectangle(X_SCREEN-505,Y_SCREEN-65, X_SCREEN, Y_SCREEN, 10,10, al_map_rgb(1,1,1));
+                al_draw_filled_rounded_rectangle(X_SCREEN-500,Y_SCREEN-60, X_SCREEN, Y_SCREEN, 10,10, al_map_rgb(225,225,210));
+                if(personagem==1){
+                al_draw_scaled_bitmap(buzz,
+                        0, 0,
+                        al_get_bitmap_width(buzz),
+                        al_get_bitmap_height(buzz),
+                        X_SCREEN-100, Y_SCREEN-100,
+                        100, 150, 0);}
+                if(personagem == 2){
+                al_draw_scaled_bitmap(zurc_icon,
+                        0, 0,
+                        al_get_bitmap_width(zurc_icon),
+                        al_get_bitmap_height(zurc_icon),
+                        X_SCREEN-100, Y_SCREEN-100,
+                        100, 150, 0);
+
+                }
+
+
                 //! ------------------------------------------------------------ FASE 1 ------------------------------------------------------------
 
                 if (fase == 1)
@@ -751,8 +632,27 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                         al_clear_to_color(al_map_rgb(255, 255, 255));
                         final =0;
                     }
- 
+
                     if( segundos > 0 && minutos ==0 &&  final == 0 && segundos <= primeira_fase_comeco){
+
+                                        if(segundos <=2){   
+                                        personagem=1;
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Tenho que resgatar meus ");
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "amigos!");
+                                        }
+                                        if(segundos >= 3 && segundos <= 5){   
+                                        personagem=2;
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Hoje será sua derrota");
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "Buzz Lightear!");
+                                        }
+                                        if(segundos == 6){   
+                                        personagem=2;
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Tropas!");
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "AVANTE!");
+                                        }if(segundos > 6){
+                                            personagem =0;
+                                        }
+
                                         //! Atualiza a posição do alvo (bomba)
 
                                         if(bomba_mov < 90 || bomba_mov > 180 ){
@@ -854,6 +754,58 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                     bullets[i].active = false;
                                                 }                      
                                         }
+                                            if (especial[i].active)
+                                            {
+                                                // Colisão com a bomba
+                                                if (especial[i].x >= bomba.x && especial[i].x <= bomba.x + al_get_bitmap_width(bomba.bitmap) &&
+                                                    especial[i].y >= bomba.y && especial[i].y <= bomba.y + al_get_bitmap_height(bomba.bitmap))
+                                                {
+                                                    bomba.hits++;
+                                                    pontuacao += 3;
+                                                    especial[i].active = false;
+                                                }
+
+                                                if (especial[i].x >= Aviao1.x && especial[i].x <= Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) &&
+                                                    especial[i].y >= Aviao1.y && especial[i].y <= Aviao1.y + al_get_bitmap_height(Aviao1.bitmap))
+                                                {
+                                                    Aviao1.hits++;
+                                                    pontuacao += 5;
+                                                    especial[i].active = false;
+                                                }
+                                                if (especial[i].x >= bomba2.x && especial[i].x <= bomba2.x + al_get_bitmap_width(bomba2.bitmap) &&
+                                                    especial[i].y >= bomba2.y && especial[i].y <= bomba2.y + al_get_bitmap_height(bomba2.bitmap))
+                                                {
+                                                    bomba2.hits++;
+                                                    pontuacao += 5;
+                                                    especial[i].active = false;
+                                                }     
+                                                if (especial2[i].active){
+                                                // Colisão com a bomba
+                                                if (especial2[i].x >= bomba.x && especial2[i].x <= bomba.x + al_get_bitmap_width(bomba.bitmap) &&
+                                                    especial2[i].y >= bomba.y && especial2[i].y <= bomba.y + al_get_bitmap_height(bomba.bitmap))
+                                                {
+                                                    bomba.hits++;
+                                                    pontuacao += 3;
+                                                    especial2[i].active = false;
+                                                }
+
+                                                if (especial2[i].x >= Aviao1.x && especial2[i].x <= Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) &&
+                                                    especial2[i].y >= Aviao1.y && especial2[i].y <= Aviao1.y + al_get_bitmap_height(Aviao1.bitmap))
+                                                {
+                                                    Aviao1.hits++;
+                                                    pontuacao += 5;
+                                                    especial2[i].active = false;
+                                                }
+                                                if (especial2[i].x >= bomba2.x && especial2[i].x <= bomba2.x + al_get_bitmap_width(bomba2.bitmap) &&
+                                                    especial2[i].y >= bomba2.y && especial2[i].y <= bomba2.y + al_get_bitmap_height(bomba2.bitmap))
+                                                {
+                                                    bomba2.hits++;
+                                                    pontuacao += 5;
+                                                    especial2[i].active = false;
+                                                }                      
+                                        }
+                                        }
+
                                         }
                                         if (bomba.active)
                                         {
@@ -904,7 +856,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                         for (int d = 0; d < 5; d++) {
                                         if (bullets_inimigos[d].active) {
                                                 float largura_tiro = 40;
-                                                float altura_tiro = al_get_bitmap_height(bullets_inimigos[d].bitmap);
                                                 float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                                 float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -920,11 +871,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                 float sprite_y_min = y;
                                                 float sprite_y_max = y + altura_sprite;
 
-                                                // Desenha o retângulo do tiro (vermelho)
-                                                al_draw_rectangle(
-                                                    tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,
-                                                    al_map_rgb(255, 0, 0), 2.0
-                                                );
+                                                
                                                 
                                                 if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                                     tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max) {
@@ -936,7 +883,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                             }
                                                 if (bullets_inimigos2[d].active) {
                                                 float largura_tiro = 40;
-                                                float altura_tiro = al_get_bitmap_height(bullets_inimigos2[d].bitmap);
                                                 float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                                 float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -952,14 +898,12 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                 float sprite_y_min = y;
                                                 float sprite_y_max = y + altura_sprite;
 
-                                                // Desenha o retângulo do tiro (vermelho)
-                                                al_draw_rectangle(
+                                                            al_draw_rectangle(
                                                     tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,
                                                     al_map_rgb(255, 0, 0), 2.0
                                                 );
 
-                                                // Verifica a colisão
-                                                if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
+                                                            if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                                     tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max) {
                                                     
                                                     sprite.hits++;
@@ -1006,6 +950,8 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                             al_draw_bitmap(Aviao1.bitmap, Aviao1.x, Aviao1.y, 0);
                                         }
 
+                                        
+
                                         //! desenha os tiros do inimigo
 
                                         for (int i = 0; i < 5; i++)
@@ -1030,35 +976,38 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                     bullets_inimigos2[i].x, bullets_inimigos2[i].y,
                                                     40, 40, 0);
                                         }
-
-                                        if(segundos >= 7){
-                                             al_draw_scaled_bitmap(
-                                                    tiro_longo_map.bitmap,
-                                                    0, 0,
-                                                    al_get_bitmap_width(tiro_longo_map.bitmap),
-                                                    al_get_bitmap_height(tiro_longo_map.bitmap),
-                                                    tiro_longo_map.x, tiro_longo_map.y,
-                                                    40, 40, 0);
-                                                
-                                                tiro_longo_map.x +=3;
-
-                                        }
-
                             }
 
                         }else{ 
                    //* ativa o vilão ou desativa
                             if (vilao1.hits >= 15){
+                                personagem=2;
+                                    al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "NÃOOOOOOOOOO");
+                                
+                            }
+
+                            if (vilao1.hits >= 20){
+                            
                                 vilao1.active = false;
                                 sprite.hits = 0;
                                 final = 0;
                                 fase = 4;
+                                personagem =0;
                             }
 
                             //! BOSS FINAL DA FASE
                             if(segundos > primeira_fase_comeco ){
+                            
                             final = 1;
 
+
+                            if(segundos >= primeira_fase_comeco && segundos < (primeira_fase_comeco+3)){   
+                            personagem=2;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Vamos ver se você");
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "encara minha arma secreta!");
+                            }if(segundos > (primeira_fase_comeco+3)){
+                                personagem =0;
+                            }
 
                             if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)) {
                                     vilao1.x = X_SCREEN -100;
@@ -1133,7 +1082,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                         al_get_bitmap_width(tiros_v1_vertical[i].bitmap),
                                                         al_get_bitmap_height(tiros_v1_vertical[i].bitmap),
                                                         tiros_v1_vertical[i].x, tiros_v1_vertical[i].y,
-                                                        20, 20, 0);
+                                                        30, 30, 0);
 
                                                 // Move o projétil para baixo
                                                 tiros_v1_vertical[i].y += BULLET_SPEED;
@@ -1174,13 +1123,39 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     if (bullets[i].x >= vilao1.x && bullets[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
                                         bullets[i].y >= vilao1.y && bullets[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
                                     {
-                                        bullets[i].active = false; // Desativa o projétil
-                                        vilao1.hits++;             // Incrementa os "hits" no vilão
-                                        pontuacao += 3;            // Incrementa a pontuação
+                                        bullets[i].active = false; 
+                                        vilao1.hits++;             
+                                        pontuacao += 3;            
                                     }
                                     if (bullets[i].x < 0 || bullets[i].x > X_SCREEN || bullets[i].y < 0 || bullets[i].y > Y_SCREEN)
                                     {
                                         bullets[i].active = false;
+                                    }
+                                }
+                                if (especial[i].active){
+                                    if (especial[i].x >= vilao1.x && especial[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
+                                        especial[i].y >= vilao1.y && especial[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
+                                    {
+                                        especial[i].active = false; 
+                                        vilao1.hits++;             
+                                        pontuacao += 3;            
+                                    }
+                                    if (especial[i].x < 0 || especial[i].x > X_SCREEN || especial[i].y < 0 || especial[i].y > Y_SCREEN)
+                                    {
+                                        especial[i].active = false;
+                                    }
+                                }
+                                if (especial2[i].active){
+                                    if (especial2[i].x >= vilao1.x && especial2[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
+                                        especial2[i].y >= vilao1.y && especial2[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
+                                    {
+                                        especial2[i].active = false; 
+                                        vilao1.hits++;             
+                                        pontuacao += 3;            
+                                    }
+                                    if (especial2[i].x < 0 || especial2[i].x > X_SCREEN || especial2[i].y < 0 || especial2[i].y > Y_SCREEN)
+                                    {
+                                        especial2[i].active = false;
                                     }
                                 }
                             }
@@ -1189,7 +1164,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             for (int d = 0; d < 5; d++){
                                 if (tiros_v1[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(tiros_v1[d].bitmap);
+                                    
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1205,10 +1180,8 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
                                             sprite.hits++;
@@ -1218,7 +1191,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                 }
                                 if (tiros_v1_2[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(tiros_v1_2[d].bitmap);
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1228,16 +1200,13 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float tiro_y_min = tiros_v1_2[d].y;
                                     float tiro_y_max = tiros_v1_2[d].y + 40;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
@@ -1249,9 +1218,9 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                 }
                                 //! <!-=====================================================               consertar essa parte comentada +++++++++++++++++++++++++++++++++++++++++++- >
                                 if (tiros_v1_vertical[d].active){
-                                    // Obtém as dimensões do tiro e do sprite
+                                    
                                     float largura_tiro = 40;
-                                    float altura_tiro = -40;
+                                    float altura_tiro = 40;
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1261,34 +1230,25 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float tiro_y_min = tiros_v1_vertical[d].y;
                                     float tiro_y_max = tiros_v1_vertical[d].y + altura_tiro;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho) para visualização
-                                    al_draw_rectangle(
-                                        tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,
-                                        al_map_rgb(255, 0, 0), 2.0);
-
-                                    // Verifica a colisão (detecção vertical com o sprite)
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
 
-                                        // Incrementa hits e decrementa pontuação
                                         sprite.hits++;
                                         pontuacao -= 2;
                                         tiros_v1_vertical[d].active = false; // Desativa o tiro após a colisão
                                     }
-
                                 }
                             }
-                                    
                         }
-                    
                     }
+
+                    
                     if(segundos >= 3){
                     
                         if(tiro_longo_map.active){    al_draw_scaled_bitmap(
@@ -1314,6 +1274,9 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             tiro_longo = true;
                         }
                     }
+                    if(tiro_longo ){
+                        tiro_longo=false;
+                    }
                     if(segundos == 10){
                         tiro_longo_map.x = X_SCREEN +80;
                         tiro_longo_map.active = true;
@@ -1321,7 +1284,8 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     }
                     if(segundos >= 3){
                     
-                        if(tiro_longo_map.active){    al_draw_scaled_bitmap(
+                        if(tiro_longo_map.active){    
+                            al_draw_scaled_bitmap(
                                 tiro_longo_map.bitmap,
                                 0, 0,
                                 al_get_bitmap_width(tiro_longo_map.bitmap),
@@ -1335,7 +1299,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             tiro_longo_map.active = false;
                         }
                     }
-
                     if (tiro_longo_map.active)
                     {
                         if (tiro_longo_map.x + al_get_bitmap_width(tiro_longo_map.bitmap) > x &&
@@ -1347,19 +1310,14 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             pontuacao +=5;
                             
                         
-                            if(segundos < 10){tiro_longo = true;}
-                            if(segundos < 10){tiro_transv = true;}
+                            tiro_transv = 1;
+                            ppower =4;
                         }
                     }
-                    if(tiro_longo){
-                        al_draw_text(font, al_map_rgb(0,0,0), 500, 500, 0, "pegou");       
-                    }
-                    if(tiro_longo){
-                        al_draw_text(font, al_map_rgb(0,0,0), 500, 300, 0, "pegou tmb");       
-                    }
-
                 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                
                 //! ------------------------------------------------------------ FASE 2 ------------------------------------------------------------
 
                 if (fase == 2){
@@ -1371,8 +1329,23 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     }
 
                     if( segundos > 0 && minutos ==0 &&  final == 0 && segundos <= primeira_fase_comeco){
+
+
                                         //! Atualiza a posição do alvo (bomba)
                                         final =0;
+                                        if(segundos <=2){   
+                                        personagem=1;
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Vou te derrotar ");
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "ZURC!");
+                                        }
+                                        if(segundos >= 3 && segundos <= 5){   
+                                        personagem=2;
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Seu fim será amargp");
+                                            al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "Buzz Lightear!");
+                                        }
+                                        if(segundos > 5){
+                                            personagem =0;
+                                        }
 
 
                                         ps = 5;
@@ -1461,6 +1434,14 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                             if (bullets[i].active)
                                             {
                                                 // Colisão com a bomba
+                                                if (bullets[i].x >= Aviao4.x && bullets[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
+                                                    bullets[i].y >= Aviao4.y && bullets[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                {
+                                                    Aviao4.hits++;
+                                                    pontuacao += 3;
+                                                    bullets[i].active = false;
+                                                }
+
                                                 if (bullets[i].x >= Aviao3.x && bullets[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
                                                     bullets[i].y >= Aviao3.y && bullets[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
                                                 {
@@ -1475,6 +1456,60 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                     Aviao2.hits++;
                                                     pontuacao += 5;
                                                     bullets[i].active = false;
+                                                }
+                                        }
+                                        if (especial2[i].active)
+                                            {
+                                                // Colisão com a bomba
+                                                if (especial2[i].x >= Aviao4.x && especial2[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
+                                                    especial2[i].y >= Aviao4.y && especial2[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                {
+                                                    Aviao4.hits++;
+                                                    pontuacao += 3;
+                                                    especial2[i].active = false;
+                                                }
+
+                                                if (especial2[i].x >= Aviao3.x && especial2[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
+                                                    especial2[i].y >= Aviao3.y && especial2[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
+                                                {
+                                                    Aviao3.hits++;
+                                                    pontuacao += 3;
+                                                    especial2[i].active = false;
+                                                }
+
+                                                if (especial2[i].x >= Aviao2.x && especial2[i].x <= Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) &&
+                                                    especial2[i].y >= Aviao2.y && especial2[i].y <= Aviao2.y + al_get_bitmap_height(Aviao2.bitmap))
+                                                {
+                                                    Aviao2.hits++;
+                                                    pontuacao += 5;
+                                                    especial2[i].active = false;
+                                                }
+                                        }
+                                        if (especial[i].active)
+                                            {
+                                                // Colisão com a bomba
+                                                if (especial[i].x >= Aviao4.x && especial[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
+                                                    especial[i].y >= Aviao4.y && especial[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                {
+                                                    Aviao4.hits++;
+                                                    pontuacao += 3;
+                                                    especial[i].active = false;
+                                                }
+
+                                                if (especial[i].x >= Aviao3.x && especial[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
+                                                    especial[i].y >= Aviao3.y && especial[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
+                                                {
+                                                    Aviao3.hits++;
+                                                    pontuacao += 3;
+                                                    especial[i].active = false;
+                                                }
+
+                                                if (especial[i].x >= Aviao2.x && especial[i].x <= Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) &&
+                                                    especial[i].y >= Aviao2.y && especial[i].y <= Aviao2.y + al_get_bitmap_height(Aviao2.bitmap))
+                                                {
+                                                    Aviao2.hits++;
+                                                    pontuacao += 5;
+                                                    especial[i].active = false;
                                                 }
                                         }
                                         }
@@ -1603,7 +1638,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                         }
 
                                         if(segundos >= 7){
-                                             al_draw_scaled_bitmap(
+                                            al_draw_scaled_bitmap(
                                                     tiro_longo_map.bitmap,
                                                     0, 0,
                                                     al_get_bitmap_width(tiro_longo_map.bitmap),
@@ -1616,13 +1651,24 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
 
                         }else{ 
                    //* ativa o vilão ou desativa
-                            if (vilao2.hits >= 15){
+                            if (vilao2.hits >= 30){
                                 vilao2.active = false;
                                 sprite.hits = 0;
                                 final = 0;
+                                segundos_total = segundos;
                                 fase = 3;
                             }
 
+                        if (vilao2.hits >= 20 && vilao2.hits < 28){
+                                personagem=2;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "EU NÃO CAIREI");
+
+                            }
+                            if (vilao2.hits > 28){
+                                personagem=2;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "NÃOOOOO!");
+
+                            }
                             //! BOSS FINAL DA FASE
                             if(segundos > primeira_fase_comeco ){
                             final = 1;
@@ -1631,6 +1677,25 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)) {
                                     vilao2.x = X_SCREEN -100;
                             
+                            if(segundos >= primeira_fase_comeco && segundos < (primeira_fase_comeco+2)){   
+                            personagem=2;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Parece que terei");
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "que fazer tudo sozinho!");
+                            }
+                            if(segundos < (primeira_fase_comeco+3) && segundos >= (primeira_fase_comeco+2)){   
+                            personagem=2;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Enfrente seu fim");
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "MEU FILHO!");
+                            }
+                            if(segundos <= (primeira_fase_comeco+4) && segundos > (primeira_fase_comeco+3)){   
+                            personagem=1;
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "O QUE?");
+                                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -30, 0, "NÃOOOOOOOO!");
+                            }
+
+                            if(segundos == (primeira_fase_comeco+5)){
+                                personagem =0;
+                            }
                             
                                 //* desenha os tiros horizontais
                                 for (int i = 0; i < 5; i++){
@@ -1693,7 +1758,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
 
                             if(segundos > final_branco3 && segundos <= final_vertical2){
 
-                    if( segundos > 0 && minutos ==0 &&  final == 1 && segundos <= primeira_fase_comeco)
                                 al_draw_bitmap(vilao2.bitmap, vilao2.x, vilao2.y, 0);
                                 ps = 30;
                                 if((vilao2.y <=600 && mov_v1!=2 &&  mov_v1!=3)){
@@ -1744,24 +1808,23 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
 
                             if ((segundos > final_branco && segundos <= final_com_vertical)){
                                 
-                     
                                 //! funciona devagar
                                 for(int r =0; r<5; r++){
                                     if(bullets_inimigos2[r].active){
                                         bullets_inimigos2[r].x+=BULLET_SPEED;   
                                         al_draw_scaled_bitmap(
                                             bullets_inimigos2->bitmap,
-                                            0, 0, // Origem no bitmap
+                                            0, 0,
                                             al_get_bitmap_width(bullets_inimigos2->bitmap),
                                             al_get_bitmap_height(bullets_inimigos2->bitmap),
-                                            bullets_inimigos2[r].x, bullets_inimigos2[r].y,              // Posição na tela
-                                            40,40, // Escala para a altura da tela
-                                            0                         // Sem inversão
+                                            bullets_inimigos2[r].x, bullets_inimigos2[r].y,         
+                                            40,40, 
+                                            0                         
                                         );                                     
                                     }
                                     //!funciona uma vez?
                                     if(bullets_inimigos[r].active){
-                                        bullets_inimigos[r];     
+                    
                                         bullets_inimigos[r].y-=BULLET_SPEED;                                   
                                         al_draw_scaled_bitmap(
                                             bullets_inimigos->bitmap,
@@ -1774,7 +1837,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                         );       
 
                                         if (tiros_v1_vertical[r].y > X_SCREEN) {
-                                            tiros_v1_vertical[r].active = false; // Desativa o projétil
+                                            tiros_v1_vertical[r].active = false; 
                                         }
                                     }
                                     //! funciona ok
@@ -1786,7 +1849,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                                 al_get_bitmap_width(tiros_v1_vertical[r].bitmap),
                                                 al_get_bitmap_height(tiros_v1_vertical[r].bitmap),
                                                 tiros_v1_vertical[r].x, tiros_v1_vertical[r].y,
-                                                20, 20, 0
+                                                40, 40, 0
                                             );
 
                                             if (tiros_v1_vertical[r].y > X_SCREEN) { 
@@ -1831,22 +1894,47 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     if (bullets[i].x >= vilao2.x && bullets[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
                                         bullets[i].y >= vilao2.y && bullets[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
                                     {
-                                        bullets[i].active = false; // Desativa o projétil
-                                        vilao2.hits++;             // Incrementa os "hits" no vilão
-                                        pontuacao += 3;            // Incrementa a pontuação
+                                        bullets[i].active = false; 
+                                        vilao2.hits++;             
+                                        pontuacao += 3;            
                                     }
                                     if (bullets[i].x < 0 || bullets[i].x > X_SCREEN || bullets[i].y < 0 || bullets[i].y > Y_SCREEN)
                                     {
                                         bullets[i].active = false;
                                     }
                                 }
-                            }
-
-
-                                    
+                                if (especial[i].active)
+                                {
+                                    if (especial[i].x >= vilao2.x && especial[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
+                                        especial[i].y >= vilao2.y && especial[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
+                                    {
+                                        especial[i].active = false; 
+                                        vilao2.hits++;             
+                                        pontuacao += 3;            
+                                    }
+                                    if (especial[i].x < 0 || especial[i].x > X_SCREEN || especial[i].y < 0 || especial[i].y > Y_SCREEN)
+                                    {
+                                        especial[i].active = false;
+                                    }
+                                }
+                                if (especial2[i].active)
+                                {
+                                    if (especial2[i].x >= vilao2.x && especial2[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
+                                        especial2[i].y >= vilao2.y && especial2[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
+                                    {
+                                        especial2[i].active = false; 
+                                        vilao2.hits++;             
+                                        pontuacao += 3;            
+                                    }
+                                    if (especial2[i].x < 0 || especial2[i].x > X_SCREEN || especial2[i].y < 0 || especial2[i].y > Y_SCREEN)
+                                    {
+                                        especial2[i].active = false;
+                                    }
+                                }
+                            } 
                         }
-                    
                     }
+
                     if(segundos >= 3){
                     
                         if(tiro_longo_map.active){    al_draw_scaled_bitmap(
@@ -1869,7 +1957,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                         {
                             tiro_longo_map.active=false;
                             pontuacao +=5;
-                            tiro_longo = true;
+                            tiro_transv = 1;
                         }
                     }
                     if(segundos == 10){
@@ -1904,28 +1992,23 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             tiro_longo_map.active=false;
                             pontuacao +=5;
                             
-                        
-                            if(segundos < 10){tiro_longo = true;}
-                            if(segundos < 10){tiro_transv = true;}
+                            tiro_transv =1;
+                            ppower =4;
                         }
                     }
-                    if(tiro_longo){
-                        al_draw_text(font, al_map_rgb(0,0,0), 500, 500, 0, "pegou");       
-                    }
-                    if(tiro_longo){
-                        al_draw_text(font, al_map_rgb(0,0,0), 500, 300, 0, "pegou tmb");       
-                    }
+
 
                 }
 
                 //! ----------------------------------- FIM SEGUNDA FASE ------------------------------
 
 
+
+
                 for (int d = 0; d < 5; d++){
                 
                                 if (bullets_inimigos[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(bullets_inimigos[d].bitmap);
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1935,16 +2018,13 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float tiro_y_min = bullets_inimigos[d].y;
                                     float tiro_y_max = bullets_inimigos[d].y + 40;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
                                             sprite.hits++;
@@ -1954,7 +2034,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                 }
                                 if (bullets_inimigos2[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(bullets_inimigos2[d].bitmap);
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1964,16 +2043,13 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float tiro_y_min = bullets_inimigos2[d].y;
                                     float tiro_y_max = bullets_inimigos2[d].y + 40;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
                                             sprite.hits++;
@@ -1983,7 +2059,6 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                 }
                                 if (tiros_v1[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(tiros_v1[d].bitmap);
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
@@ -1993,45 +2068,37 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                     float tiro_y_min = tiros_v1[d].y;
                                     float tiro_y_max = tiros_v1[d].y + 40;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
                                             sprite.hits++;
                                             pontuacao -= 2;
-                                            tiros_v1[d].active = false; // Desativa o tiro
+                                            tiros_v1[d].active = false; 
                                     }
                                 }
                                 if (tiros_v1_2[d].active){
                                     float largura_tiro = 40;
-                                    float altura_tiro = al_get_bitmap_height(tiros_v1_2[d].bitmap);
                                     float largura_sprite = al_get_bitmap_width(sprite.bitmap);
                                     float altura_sprite = al_get_bitmap_height(sprite.bitmap);
 
-                                    // Retângulo do tiro
                                     float tiro_x_min = tiros_v1_2[d].x;
                                     float tiro_x_max = tiros_v1_2[d].x + largura_tiro;
                                     float tiro_y_min = tiros_v1_2[d].y;
                                     float tiro_y_max = tiros_v1_2[d].y + 40;
 
-                                    // Retângulo do sprite
                                     float sprite_x_min = x;
                                     float sprite_x_max = x + largura_sprite;
                                     float sprite_y_min = y;
                                     float sprite_y_max = y + altura_sprite;
 
-                                    // Desenha o retângulo do tiro (vermelho)
                                     al_draw_rectangle(tiro_x_min, tiro_y_min, tiro_x_max, tiro_y_max,al_map_rgb(255, 0, 0), 2.0);
 
-                                    // Verifica a colisão
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
@@ -2041,7 +2108,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                                         tiros_v1_2[d].active = false; // Desativa o tiro
                                     }
                                 }
-                                //! <!-=====================================================               consertar essa parte comentada +++++++++++++++++++++++++++++++++++++++++++- >
+                                //! <!-===================================================== consertar essa parte comentada +++++++++++++++++++++++++++++++++++++++++++- >
                 }
                 //! desenha os tiros do jogador
 
@@ -2051,6 +2118,15 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                     {
                         al_draw_filled_rectangle(bullets[i].x, bullets[i].y, bullets[i].x + 30, bullets[i].y + 15, al_map_rgb(255, 255, 0));
                     }
+                    if (especial2[i].active)
+                    {
+                        al_draw_filled_rectangle(especial2[i].x, especial2[i].y, especial2[i].x + 30, especial2[i].y + 15, al_map_rgb(255, 255, 0));
+                        
+                    }
+                    if (especial[i].active)
+                    {
+                        al_draw_filled_rectangle(especial[i].x, especial[i].y, especial[i].x + 30, especial[i].y + 15, al_map_rgb(255, 255, 0));
+                    }
             
                 }
 
@@ -2058,19 +2134,18 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                 sprintf(tempo, "%02d:%02d", minutos, segundos);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 20, 10, 0, tempo);
 
-                sprintf(pont, "Pontuação: %d", sprite.hits);
-                al_draw_text(font, al_map_rgb(255, 255, 255), 500, 610, 0, pont);
+                sprintf(pont, "Pontuação: %d", pontuacao);
+                al_draw_text(font, al_map_rgb(255, 255, 255), 10, Y_SCREEN-60, 0, pont);
 
                 
-                //!  power scalling
+               //!  power scalling
                 ALLEGRO_COLOR cor = al_map_rgb(0, 255, 0);
 
                 if(ppower >=3){ cor = al_map_rgb(255, 0, 0);}
-                ppower = 5;
                 for (int t = 0; t < ppower; t++) {
-                    al_draw_filled_rectangle(50 + 60*t, Y_SCREEN-50, 100 + 60*t, Y_SCREEN-30, cor);
-                }
+                    al_draw_filled_rectangle(20 + 60*t, Y_SCREEN-50, 50 + 60*t, Y_SCREEN-40, cor);
 
+                }
                 //! CONTROLA OS CORAÇÕES
                 int coracoes_num = sprite.hits - 1;
                 for (int i = 2; i > coracoes_num; i--)
@@ -2086,7 +2161,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             coracao_largura, coracao_altura, 0);
                     }
                 }
-
+                
                 //! controle de tiros da fase 1 
                 if (segundos % 2 == 0 && fase == 1){
                     if(final ==0){
@@ -2101,19 +2176,23 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                         }}
                     }
 
-                    if(final ==1){
-                                                    
-                        if ((segundos < final_horizontal) || 
-                            (segundos > final_branco2 && segundos <= final_horizontal2) || 
-                            (segundos > final_vertical2)){
-                            atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1_2, vilao1.x, vilao1.y);
-                            atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1, vilao1.x, vilao1.y+25);
-                        }                        
+            if (final == 1) {
+                if ((segundos < final_horizontal) || 
+                    (segundos > final_branco2 && segundos <= final_horizontal2) || 
+                    (segundos > final_vertical2)) {
+                    if (segundos % 3 == 0) {
+                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1_2, vilao1.x, vilao1.y);
+                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1, vilao1.x, vilao1.y + 25);
+                    } else {
+                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1, vilao1.x, vilao1.y + 25);
                     }
+                }                        
+            }
+
                 }
 
                 if(milisegundos %60 == 0 && fase == 1 && final ==1){
-                    if (segundos > final_branco && segundos < final_com_vertical || segundos > final_branco3 && segundos < final_vertical2){
+                    if ((segundos > final_branco && segundos < final_com_vertical) || (segundos > final_branco3 && segundos < final_vertical2)){
                             atiraInimigo_vertical(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1_vertical, vilao1.x, vilao1.y);
                     }
                 }
@@ -2134,7 +2213,7 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                             atiraInimigo(al_get_bitmap_width(Aviao4.bitmap), al_get_bitmap_height(Aviao4.bitmap), tiros_v1_2, Aviao4.x, Aviao4.y+25);
                     }
                 }
-                    if(final ==1){
+                if(final ==1){
                         if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)){
                         
                             atiraInimigo(al_get_bitmap_width(vilao2.bitmap), al_get_bitmap_height(vilao2.bitmap), bullets_inimigos2, vilao2.x, vilao2.y+25);
@@ -2147,31 +2226,20 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                         }}
 
                 }
+                if (tiro_transv == 1) {
+                    atira(sprite_width, sprite_height, especial2, x, y);
+                    atira(sprite_width, sprite_height, especial, x, y);
 
-                if(tiro_transv && permissao_transv == 1){
-                    atira_transv(sprite_width, sprite_height, bullets, x, y, font);
-                    controler_tiros_especiais +=1;
-                    if(controler_tiros_especiais >=250){
-                        permissao_transv = 0;
-                        tiro_transv = false;
-                        controler_tiros_especiais = 0;
 
+                    ctln_transversal++;
+                    if (ctln_transversal == 10 || ctln_transversal == 60 || ctln_transversal == 120 || ctln_transversal == 180) {
+                        ppower--;
+                    }
+
+                    if (ctln_transversal >= 180) { 
+                        tiro_transv = 0;
                     }
                 }
-                if(tiro_longo && permissao_longo == 1){
-                    atira_transv(sprite_width, sprite_height, bullets, x, y, font);
-
-                    //atira_longo(sprite_width, sprite_height, bullets, x, y, font);
-                    controler_tiros_especiais +=1;
-                    if(controler_tiros_especiais >=250){
-                        permissao_longo = 0;
-                        tiro_longo = false;
-                        controler_tiros_especiais = 0;
-
-                    }
-                }
-        
-
                 al_flip_display();
 
                 al_rest(0.01);
@@ -2185,16 +2253,9 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
         }
         else if (event.type == ALLEGRO_EVENT_KEY_DOWN)
         {
-            if (event.keyboard.keycode == ALLEGRO_KEY_K) {
-                if(tiro_transv){
-                    permissao_transv =1;
-                }
-            }
-            if (event.keyboard.keycode == ALLEGRO_KEY_M){
-                if(tiro_longo){
-                    permissao_longo =1;
-                }
-            }
+            if (event.keyboard.keycode == 13)
+                ctln_transversal = 1;
+
             if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
                 key_left = true;
             if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
@@ -2208,6 +2269,9 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
         }
         else if (event.type == ALLEGRO_EVENT_KEY_UP)
         {
+            if (event.keyboard.keycode == 13)
+            ctln_transversal =1;
+
             if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
                 key_left = false;
             if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
@@ -2220,12 +2284,24 @@ int final_vertical2 = final_branco3 + 9;        // 32-40: Vilão atira verticalm
                 key_space = false;
         }
 
-        if (key_space)
-        {
+        if (key_space){
             atira(sprite_width, sprite_height, bullets, x, y);
+        
         }
     }
 
+    for(int g =0; g<5; g++){
+    al_destroy_bitmap(especial2[g].bitmap);
+    al_destroy_bitmap(especial[g].bitmap);
+    al_destroy_bitmap(tiros_v1[g].bitmap);
+    al_destroy_bitmap(tiros_v1_2[g].bitmap);
+    al_destroy_bitmap(bullets_inimigos2[g].bitmap);
+    al_destroy_bitmap(bullets_inimigos[g].bitmap);
+    al_destroy_bitmap(tiros_v1_vertical[g].bitmap);
+    }
+    al_destroy_bitmap(zurc);
+    al_destroy_bitmap(zurc_icon);
+    al_destroy_bitmap(fundo);
     al_destroy_bitmap(cor1[0].bitmap);
     al_destroy_bitmap(cor1[1].bitmap);
     al_destroy_bitmap(cor1[2].bitmap);
