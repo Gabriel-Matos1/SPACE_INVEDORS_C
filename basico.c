@@ -11,8 +11,6 @@
 #include "viloes.h"
 #include "jogador.h"
 
-
-
 void reset_game(jogador *sprite, Bomba *bomba, AviaoInimigoVertical *Aviao1)
 {
     sprite->x = 10;
@@ -27,7 +25,6 @@ void reset_game(jogador *sprite, Bomba *bomba, AviaoInimigoVertical *Aviao1)
     Aviao1->hits = 0;
     Aviao1->active = true;
 }
-
 //!  --------------------------------------------------------------  COMEÇO DO JOGO ----------------------------------------------------------------
 
 int main()
@@ -41,9 +38,9 @@ int main()
         return -1;
     }
     ALLEGRO_FONT *font = al_load_font("DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 36, 0);
-  
-  ALLEGRO_FONT *font2 = al_load_font("DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 22, 0);
-  
+
+    ALLEGRO_FONT *font2 = al_load_font("DM_Mono,Edu_AU_VIC_WA_NT_Pre/DM_Mono/DMMono-Light.ttf", 22, 0);
+
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     if (!queue)
     {
@@ -62,29 +59,30 @@ int main()
     }
 
     //! -------------------------------------------------------------JOGADOR --------------------------------------------------
-    jogador sprite;
-    sprite.bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
+    jogador *sprite = (jogador*) malloc(sizeof(jogador));
+    sprite->bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
 
-    int sprite_width = al_get_bitmap_width(sprite.bitmap);
-    int sprite_height = al_get_bitmap_height(sprite.bitmap);
+    int sprite_width = al_get_bitmap_width(sprite->bitmap);
+    int sprite_height = al_get_bitmap_height(sprite->bitmap);
 
     float x = 10;
     float y = (Y_SCREEN - sprite_height) / 2;
-    sprite.altura = sprite_height;
-    sprite.largura = sprite_width;
+    sprite->altura = sprite_height;
+    sprite->largura = sprite_width;
 
     float speed = 8.0;
 
-    jogador auxiliar1;
-    auxiliar1.bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
+    jogador *auxiliar1= (jogador*) malloc(sizeof(jogador));
 
-    int auxiliar1_width = al_get_bitmap_width(auxiliar1.bitmap);
-    int auxiliar1_heig = al_get_bitmap_height(auxiliar1.bitmap);
+    auxiliar1->bitmap = al_load_bitmap("SpaceShipSamples/Cruiser2_42x61.png");
 
-    float x_auxiliar1 = -20;
+    int auxiliar1_width = al_get_bitmap_width(auxiliar1->bitmap);
+    int auxiliar1_heig = al_get_bitmap_height(auxiliar1->bitmap);
+
+    float x_auxiliar1 = -70;
     float y_auxiliar1 = ((Y_SCREEN - sprite_height) / 2)-100;
-    auxiliar1.altura = auxiliar1_width;
-    auxiliar1.largura = auxiliar1_width;
+    auxiliar1->altura = auxiliar1_width;
+    auxiliar1->largura = auxiliar1_width;
 
 
     //!tiros amigos
@@ -119,78 +117,80 @@ int main()
     }
 
     //! ----------------------------------------------INIMIGOS --------------------------------------------------
-    Boss vilao1;
-    vilao1.bitmap = al_load_bitmap("SpaceShipSamples/Flash_10_80x110.png");
+    Boss *vilao1 = (Boss*) malloc(sizeof(Boss));
+    vilao1->bitmap = al_load_bitmap("SpaceShipSamples/Flash_10_80x110.png");
 
-    vilao1.x = X_SCREEN - 100;
-    vilao1.y = (Y_SCREEN - al_get_bitmap_height(vilao1.bitmap)) / 2;
-    vilao1.hits = 0;
-    vilao1.active = true;
+    vilao1->x = X_SCREEN - 100;
+    vilao1->y = (Y_SCREEN - al_get_bitmap_height(vilao1->bitmap)) / 2;
+    vilao1->hits = 0;
+    vilao1->active = true;
 
+    Boss *vilao2  = (Boss*) malloc(sizeof(Boss));
+    vilao2->bitmap = al_load_bitmap("SpaceShipSamples/Fear_A_Shadow_100x100.png");
 
-    Boss vilao2;
-    vilao2.bitmap = al_load_bitmap("SpaceShipSamples/Fear_A_Shadow_100x100.png");
+    vilao2->x = X_SCREEN - 100;
+    vilao2->y = (Y_SCREEN - al_get_bitmap_height(vilao2->bitmap)) / 2;
+    vilao2->hits = 0;
+    vilao2->active = true;
 
-    vilao2.x = X_SCREEN - 100;
-    vilao2.y = (Y_SCREEN - al_get_bitmap_height(vilao2.bitmap)) / 2;
-    vilao2.hits = 0;
-    vilao2.active = true;
+    Bomba *bomba = (Bomba*) malloc(sizeof(Bomba));
+    bomba->bitmap = al_load_bitmap("SpaceShipSamples/Magicfly_47x65.png");
 
-    Bomba bomba;
-    bomba.bitmap = al_load_bitmap("SpaceShipSamples/Magicfly_47x65.png");
-
-    bomba.x = X_SCREEN - 100;
-    bomba.y = (Y_SCREEN - al_get_bitmap_height(bomba.bitmap)) / 2;
-    bomba.hits = 0;
-    bomba.active = true;
-
-
-    Bomba bomba2;
-    bomba2.bitmap = al_load_bitmap("SpaceShipSamples/Buggy_Black_63x69.png");
-
-    bomba2.x = X_SCREEN - 50;
-    bomba2.y = 50 + ((Y_SCREEN - al_get_bitmap_height(bomba2.bitmap)) / 2);
-    bomba2.hits = 0;
-    bomba2.active = true;
-
-    AviaoInimigoVertical Aviao1;
-    Aviao1.bitmap = al_load_bitmap("SpaceShipSamples/Scorpion_Evo_112x102.png");
-    Aviao1.x = X_SCREEN - 100;
-    Aviao1.y = (Y_SCREEN - al_get_bitmap_height(Aviao1.bitmap)) / 1.5;
-    Aviao1.hits = 0;
-    Aviao1.active = true;
+    bomba->x = X_SCREEN - 100;
+    bomba->y = (Y_SCREEN - al_get_bitmap_height(bomba->bitmap)) / 2;
+    bomba->hits = 0;
+    bomba->active = true;
 
 
-    AviaoInimigoVertical Aviao2;
-    Aviao2.bitmap = al_load_bitmap("SpaceShipSamples/TinyCruiser_Ice_64x64.png");
-    Aviao2.x = X_SCREEN - 100;
-    Aviao2.y = (Y_SCREEN/2)-100;
-    Aviao2.hits = 0;
-    Aviao2.active = true;
+    Bomba *bomba2 = (Bomba*) malloc(sizeof(Bomba));
+    bomba2->bitmap = al_load_bitmap("SpaceShipSamples/Buggy_Black_63x69.png");
 
-    AviaoInimigoVertical Aviao3;
-    Aviao3.bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
-    Aviao3.x = X_SCREEN + 100;
-    Aviao3.y = (Y_SCREEN/2)-100;
-    Aviao3.hits = 0;
-    Aviao3.active = true;
+    bomba2->x = X_SCREEN - 50;
+    bomba2->y = 50 + ((Y_SCREEN - al_get_bitmap_height(bomba2->bitmap)) / 2);
+    bomba2->hits = 0;
+    bomba2->active = true;
 
-    AviaoInimigoVertical Aviao4;
-    Aviao4.bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
-    Aviao4.x = X_SCREEN + 100;
-    Aviao4.y = (Y_SCREEN/2)+100;
-    Aviao4.hits = 0;
-    Aviao4.active = true;
+    AviaoInimigoVertical *Aviao1 = (AviaoInimigoVertical*) malloc(sizeof(AviaoInimigoVertical));
+    Aviao1->bitmap = al_load_bitmap("SpaceShipSamples/Scorpion_Evo_112x102.png");
+    Aviao1->x = X_SCREEN - 100;
+    Aviao1->y = (Y_SCREEN - al_get_bitmap_height(Aviao1->bitmap)) / 1.5;
+    Aviao1->hits = 0;
+    Aviao1->active = true;
+
+
+    AviaoInimigoVertical *Aviao2 = (AviaoInimigoVertical*) malloc(sizeof(AviaoInimigoVertical));
+    Aviao2->bitmap = al_load_bitmap("SpaceShipSamples/TinyCruiser_Ice_64x64.png");
+    Aviao2->x = X_SCREEN - 100;
+    Aviao2->y = (Y_SCREEN/2)-100;
+    Aviao2->hits = 0;
+    Aviao2->active = true;
+
+
+    AviaoInimigoVertical *Aviao3 = (AviaoInimigoVertical*) malloc(sizeof(AviaoInimigoVertical));;
+    Aviao3->bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
+    Aviao3->x = X_SCREEN + 100;
+    Aviao3->y = (Y_SCREEN/2)-100;
+    Aviao3->hits = 0;
+    Aviao3->active = true;
+
+    AviaoInimigoVertical *Aviao4 = (AviaoInimigoVertical*) malloc(sizeof(AviaoInimigoVertical));;
+    Aviao4->bitmap = al_load_bitmap("SpaceShipSamples/Flash_A_71x75.png");
+    Aviao4->x = X_SCREEN + 100;
+    Aviao4->y = (Y_SCREEN/2)+100;
+    Aviao4->hits = 0;
+    Aviao4->active = true;
+
 
    //! _________________________________________________________________ ITEMS _______________________________________________
 
-    item tiro_longo_map;
-    tiro_longo_map.bitmap = al_load_bitmap("SpaceShipSamples/busssLight.png");
+    item *tiro_longo_map = (item*) malloc(sizeof(item));
+    tiro_longo_map->bitmap = al_load_bitmap("SpaceShipSamples/busssLight.png");
     
-    tiro_longo_map.y = Y_SCREEN -300;
-    tiro_longo_map.x = X_SCREEN +100;
-    tiro_longo_map.active = true;
+    tiro_longo_map->y = Y_SCREEN -300;
+    tiro_longo_map->x = X_SCREEN +100;
+    tiro_longo_map->active = true;
 
+    
     Coracao cor1[3];
     cor1[0].bitmap = al_load_bitmap("SpaceShipSamples/cor.png");
     cor1[1].bitmap = al_load_bitmap("SpaceShipSamples/cor.png");
@@ -273,6 +273,7 @@ int main()
     int comeco=0;
     int segundos_total=0;
     int anima_seg=0;
+
     while (running){
         al_wait_for_event(queue, &event);
 
@@ -297,7 +298,10 @@ int main()
 
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 250, ALLEGRO_ALIGN_CENTRE, "Pressione Space");
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "para começar!");
-
+                ctln_transversal =0;
+                ctln_longo =0;
+                tiro_longo =0;
+                tiro_transv =0;
                 if (key_space)
                 {
                     comeco = 1;
@@ -307,25 +311,6 @@ int main()
 
             }
 
-            if (!inicio && comeco ==1&&morreu == false && fase== 1 && fase != 3)
-            {
-                al_clear_to_color(al_map_rgb(0, 0, 0));
-                al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
-                al_draw_filled_rounded_rectangle((X_SCREEN/2)-300,(Y_SCREEN/2)-65, (X_SCREEN/2)+200, (Y_SCREEN/2)+100, 10,10, al_map_rgb(1,1,1));
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 300, ALLEGRO_ALIGN_CENTRE, "Pressione Space");
-                al_draw_text(font, al_map_rgb(255, 255, 255), 400, 350, ALLEGRO_ALIGN_CENTRE, "para começar!");
-
-                if (key_space)
-                {
-                    fase = 1;
-                    vilao1.hits=0;
-                    vilao2.hits=0;
-                    ctln_transversal =0;
-                }
-
-                al_flip_display();
-
-            }
 
             if (morreu == true && fase == 0){
                     inicio = false;
@@ -339,11 +324,23 @@ int main()
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 400, ALLEGRO_ALIGN_CENTRE, "Zurc vence novamente!");
                 al_draw_text(font, al_map_rgb(255, 255, 255), 200, 450, 0, pont);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 420, 500, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
-                reset_game(&sprite, &bomba, &Aviao1);
-
+                sprite->x = 10;
+                sprite->y = (Y_SCREEN - al_get_bitmap_height(sprite->bitmap)) / 2;
+                sprite->hits = 0;
+                bomba->x = X_SCREEN - 100;
+                bomba->y = (Y_SCREEN - al_get_bitmap_height(bomba->bitmap)) / 2;
+                bomba->hits = 0;
+                bomba->active = true;
+                Aviao1->x = X_SCREEN - 100;
+                Aviao1->y = (Y_SCREEN - al_get_bitmap_height(Aviao1->bitmap)) / 1.5;
+                Aviao1->hits = 0;
+                Aviao1->active = true;
+                ctln_transversal =0;
+                ctln_longo =0;
+                tiro_longo =0;
+                tiro_transv =0;
                 if (key_space)
                 {
-                    ctln_transversal =0;
 
                     inicio = true;
                     morreu = false;
@@ -355,40 +352,56 @@ int main()
                     y = (Y_SCREEN - sprite_height) / 2;
                     fase = 1;
 
-                    vilao1.hits=0;
-                    vilao2.hits=0;
+                    vilao1->hits=0;
+                    vilao2->hits=0;
 
                 }
 
                 al_flip_display();
             }
 
-            if (fase == 4)
-            {
+            if (fase == 4){
                 inicio = false;
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, X_SCREEN, Y_SCREEN, 0);
+
                 al_draw_filled_rounded_rectangle((X_SCREEN/2)-100,Y_SCREEN-65, (X_SCREEN/2)+100, Y_SCREEN, 10,10, al_map_rgb(1,1,1));
                 al_draw_filled_rounded_rectangle(X_SCREEN-500,Y_SCREEN-60, X_SCREEN, Y_SCREEN, 10,10, al_map_rgb(225,225,210));
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 200, ALLEGRO_ALIGN_CENTRE, "1 fase completada!");
+                personagem=1;
+                al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "Só mais um passo e derrotaremos Zurc!");
 
                 sprintf(pont, "Pontuação atual: %d", pontuacao);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 200, 300, 0, pont);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 400, ALLEGRO_ALIGN_CENTRE, "Pressione Space");
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 500, ALLEGRO_ALIGN_CENTRE, "para ir para a fase 2!");
-                reset_game(&sprite, &bomba, &Aviao1);
+                sprite->x = 10;
+                sprite->y = (Y_SCREEN - al_get_bitmap_height(sprite->bitmap)) / 2;
+                sprite->hits = 0;
+                bomba->x = X_SCREEN - 100;
+                bomba->y = (Y_SCREEN - al_get_bitmap_height(bomba->bitmap)) / 2;
+                bomba->hits = 0;
+                bomba->active = true;
+                Aviao1->x = X_SCREEN - 100;
+                Aviao1->y = (Y_SCREEN - al_get_bitmap_height(Aviao1->bitmap)) / 1.5;
+                Aviao1->hits = 0;
+                Aviao1->active = true;
                 milisegundos = 0;
                 segundos = 0;
                 minutos = 0;
+                ctln_transversal =0;
+                ctln_longo =0;
+                tiro_longo =0;
+                tiro_transv =0;
                 if (key_space)
                 {
                     inicio = true;
                     fase = 2;
                     morreu = false;
 
-                    vilao1.hits=0;
-                    vilao2.hits=0;
+                    vilao1->hits=0;
+                    vilao2->hits=0;
 
                 }
 
@@ -412,10 +425,24 @@ int main()
                 sprintf(pont, "Pontuação final: %d", pontuacao);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 200, 300, 0, pont);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 400, 350, ALLEGRO_ALIGN_CENTRE, "Pressione Space para recomeçar!");
-                reset_game(&sprite, &bomba, &Aviao1);
+                sprite->x = 10;
+                sprite->y = (Y_SCREEN - al_get_bitmap_height(sprite->bitmap)) / 2;
+                sprite->hits = 0;
+                bomba->x = X_SCREEN - 100;
+                bomba->y = (Y_SCREEN - al_get_bitmap_height(bomba->bitmap)) / 2;
+                bomba->hits = 0;
+                bomba->active = true;
+                Aviao1->x = X_SCREEN - 100;
+                Aviao1->y = (Y_SCREEN - al_get_bitmap_height(Aviao1->bitmap)) / 1.5;
+                Aviao1->hits = 0;
+                Aviao1->active = true;
                 milisegundos = 0;
                 segundos = 0;
                 minutos = 0;
+                ctln_transversal =0;
+                ctln_longo =0;
+                tiro_longo =0;
+                tiro_transv =0;
                 if (key_space)
                 {
                     inicio = true;
@@ -423,8 +450,8 @@ int main()
                     morreu = false;
                     pontuacao = 0;
 
-                    vilao1.hits=0;
-                    vilao2.hits=0;
+                    vilao1->hits=0;
+                    vilao2->hits=0;
 
                 }
 
@@ -545,47 +572,47 @@ int main()
                     {
                         bullets[i].x += BULLET_SPEED;
                         if (bullets[i].x > X_SCREEN)
-                            bullets[i].active = false; // Desativa o tiro após sair da tela
+                            bullets[i].active = false; 
                     }
                     if (especial2[i].active)
                     {
                         especial2[i].x += BULLET_SPEED;
                         especial2[i].y += BULLET_SPEED;
                         if (especial2[i].x > X_SCREEN || especial2[i].y > Y_SCREEN)
-                            especial2[i].active = false; // Desativa o tiro após sair da tela
+                            especial2[i].active = false; 
                     }
                     if (especial[i].active)
                     {
                         especial[i].x += BULLET_SPEED;
                         especial[i].y -= BULLET_SPEED;
                         if (especial[i].x > X_SCREEN || especial2[i].y <0)
-                            especial[i].active = false; // Desativa o tiro após sair da tela
+                            especial[i].active = false; 
                     }
                     //!inimigos
                     if (bullets_inimigos[i].active && ctnl_tiros_vertical_v2 ==false)
                     {
                         bullets_inimigos[i].x -= BULLET_SPEED ;
                         if (bullets_inimigos[i].x < 10)
-                            bullets_inimigos[i].active = false; // Desativa o tiro após sair da tela
+                            bullets_inimigos[i].active = false; 
                     }
                     if (bullets_inimigos2[i].active && ctnl_tiros_vertical_v2 ==false)
                     {
                         bullets_inimigos2[i].x -= BULLET_SPEED;
                         if (bullets_inimigos2[i].x < 10)
-                            bullets_inimigos2[i].active = false; // Desativa o tiro após sair da tela
+                            bullets_inimigos2[i].active = false; 
                     }
                     if (tiros_v1[i].active)
                     {
                         tiros_v1[i].x -= BULLET_SPEED;
                         if (tiros_v1[i].x < 0)
-                            tiros_v1[i].active = false; // Desativa o tiro após sair da tela
+                            tiros_v1[i].active = false; 
                     }
                     
                     if (tiros_v1_2[i].active)
                     {
                         tiros_v1_2[i].x -= BULLET_SPEED;
                         if (tiros_v1_2[i].x < 10)
-                            tiros_v1_2[i].active = false; // Desativa o tiro após sair da tela
+                            tiros_v1_2[i].active = false; 
                     }
 
                 }
@@ -593,13 +620,13 @@ int main()
               //! Tiros do inimigo contra o jogador
 
 
-                if (sprite.hits >= 3)
+                if (sprite->hits >= 3)
                 {
                     morreu = true;
                     fase = 0;   
                 }
 
-                al_draw_bitmap(sprite.bitmap, x, y, 0);
+                al_draw_bitmap(sprite->bitmap, x, y, 0);
 
 
 
@@ -656,73 +683,73 @@ int main()
                                         //! Atualiza a posição do alvo (bomba)
 
                                         if(bomba_mov < 90 || bomba_mov > 180 ){
-                                            bomba.x -= 5;   
+                                            bomba->x -= 5;   
                                         }else{
                                             bomba_mov ++;
                                         }
-                                        if(bomba.x < 10){
+                                        if(bomba->x < 10){
                                             bomba_mov = 0;
                                         }
 
-                                        if (bomba.x < -al_get_bitmap_width(bomba.bitmap))
+                                        if (bomba->x < -al_get_bitmap_width(bomba->bitmap))
                                         {
-                                            bomba.x = X_SCREEN - 100;
-                                            bomba.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba.bitmap));
+                                            bomba->x = X_SCREEN - 100;
+                                            bomba->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba->bitmap));
                                         }
 
                                         //! Atualiza a posição do alvo (bomba)
-                                        bomba2.x -= 5;
-                                        if (bomba2.x < -al_get_bitmap_width(bomba2.bitmap))
+                                        bomba2->x -= 5;
+                                        if (bomba2->x < -al_get_bitmap_width(bomba2->bitmap))
                                         {
-                                            bomba2.x = X_SCREEN - 100;
-                                            bomba2.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2.bitmap));
+                                            bomba2->x = X_SCREEN - 100;
+                                            bomba2->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2->bitmap));
                                         }
                                         //! Atualiza a posição do avião inimigo vertical
                                         if (mov == 1)
                                         {
-                                            Aviao1.y -= ps;
-                                            if (Aviao1.y <= 60)
+                                            Aviao1->y -= ps;
+                                            if (Aviao1->y <= 60)
                                             {
                                                 mov = 2;
                                             }
                                         }
                                         else
                                         {
-                                            Aviao1.y += ps;
-                                            if (Aviao1.y + al_get_bitmap_height(Aviao1.bitmap) >= Y_SCREEN - 60)
+                                            Aviao1->y += ps;
+                                            if (Aviao1->y + al_get_bitmap_height(Aviao1->bitmap) >= Y_SCREEN - 60)
                                             {
                                                 mov = 1;
                                             }
                                         }
-                                        if (bomba.active)
+                                        if (bomba->active)
                                         {
-                                            if (bomba.x + al_get_bitmap_width(bomba.bitmap) > x &&
-                                                bomba.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                bomba.y + al_get_bitmap_height(bomba.bitmap) > y &&
-                                                bomba.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (bomba->x + al_get_bitmap_width(bomba->bitmap) > x &&
+                                                bomba->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                bomba->y + al_get_bitmap_height(bomba->bitmap) > y &&
+                                                bomba->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
                                                 pontuacao -= 5;
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 printf("Bomba atingiu - linha 742");
 
-                                                bomba.x = X_SCREEN + 100;
-                                                bomba.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba.bitmap));
+                                                bomba->x = X_SCREEN + 100;
+                                                bomba->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba->bitmap));
                                                 bomba_mov =0;
                                             }
                                         }
 
-                                        if (bomba2.active)
+                                        if (bomba2->active)
                                         {
-                                            if (bomba2.x + al_get_bitmap_width(bomba2.bitmap) > x &&
-                                                bomba2.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                bomba2.y + al_get_bitmap_height(bomba2.bitmap) > y &&
-                                                bomba2.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (bomba2->x + al_get_bitmap_width(bomba2->bitmap) > x &&
+                                                bomba2->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                bomba2->y + al_get_bitmap_height(bomba2->bitmap) > y &&
+                                                bomba2->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
                                                 pontuacao -= 5;
-                                                sprite.hits++;
+                                                sprite->hits++;
 
-                                                bomba2.x = X_SCREEN + 100;
-                                                bomba2.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2.bitmap));
+                                                bomba2->x = X_SCREEN + 100;
+                                                bomba2->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2->bitmap));
                                             }
                                         }
 
@@ -731,25 +758,25 @@ int main()
                                             if (bullets[i].active)
                                             {
                                                 // Colisão com a bomba
-                                                if (bullets[i].x >= bomba.x && bullets[i].x <= bomba.x + al_get_bitmap_width(bomba.bitmap) &&
-                                                    bullets[i].y >= bomba.y && bullets[i].y <= bomba.y + al_get_bitmap_height(bomba.bitmap))
+                                                if (bullets[i].x >= bomba->x && bullets[i].x <= bomba->x + al_get_bitmap_width(bomba->bitmap) &&
+                                                    bullets[i].y >= bomba->y && bullets[i].y <= bomba->y + al_get_bitmap_height(bomba->bitmap))
                                                 {
-                                                    bomba.hits++;
+                                                    bomba->hits++;
                                                     pontuacao += 3;
                                                     bullets[i].active = false;
                                                 }
 
-                                                if (bullets[i].x >= Aviao1.x && bullets[i].x <= Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) &&
-                                                    bullets[i].y >= Aviao1.y && bullets[i].y <= Aviao1.y + al_get_bitmap_height(Aviao1.bitmap))
+                                                if (bullets[i].x >= Aviao1->x && bullets[i].x <= Aviao1->x + al_get_bitmap_width(Aviao1->bitmap) &&
+                                                    bullets[i].y >= Aviao1->y && bullets[i].y <= Aviao1->y + al_get_bitmap_height(Aviao1->bitmap))
                                                 {
-                                                    Aviao1.hits++;
+                                                    Aviao1->hits++;
                                                     pontuacao += 5;
                                                     bullets[i].active = false;
                                                 }
-                                                if (bullets[i].x >= bomba2.x && bullets[i].x <= bomba2.x + al_get_bitmap_width(bomba2.bitmap) &&
-                                                    bullets[i].y >= bomba2.y && bullets[i].y <= bomba2.y + al_get_bitmap_height(bomba2.bitmap))
+                                                if (bullets[i].x >= bomba2->x && bullets[i].x <= bomba2->x + al_get_bitmap_width(bomba2->bitmap) &&
+                                                    bullets[i].y >= bomba2->y && bullets[i].y <= bomba2->y + al_get_bitmap_height(bomba2->bitmap))
                                                 {
-                                                    bomba2.hits++;
+                                                    bomba2->hits++;
                                                     pontuacao += 5;
                                                     bullets[i].active = false;
                                                 }                      
@@ -757,49 +784,48 @@ int main()
                                             if (especial[i].active)
                                             {
                                                 // Colisão com a bomba
-                                                if (especial[i].x >= bomba.x && especial[i].x <= bomba.x + al_get_bitmap_width(bomba.bitmap) &&
-                                                    especial[i].y >= bomba.y && especial[i].y <= bomba.y + al_get_bitmap_height(bomba.bitmap))
+                                                if (especial[i].x >= bomba->x && especial[i].x <= bomba->x + al_get_bitmap_width(bomba->bitmap) &&
+                                                    especial[i].y >= bomba->y && especial[i].y <= bomba->y + al_get_bitmap_height(bomba->bitmap))
                                                 {
-                                                    bomba.hits++;
+                                                    bomba->hits++;
                                                     pontuacao += 3;
                                                     especial[i].active = false;
                                                 }
 
-                                                if (especial[i].x >= Aviao1.x && especial[i].x <= Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) &&
-                                                    especial[i].y >= Aviao1.y && especial[i].y <= Aviao1.y + al_get_bitmap_height(Aviao1.bitmap))
+                                                if (especial[i].x >= Aviao1->x && especial[i].x <= Aviao1->x + al_get_bitmap_width(Aviao1->bitmap) &&
+                                                    especial[i].y >= Aviao1->y && especial[i].y <= Aviao1->y + al_get_bitmap_height(Aviao1->bitmap))
                                                 {
-                                                    Aviao1.hits++;
+                                                    Aviao1->hits++;
                                                     pontuacao += 5;
                                                     especial[i].active = false;
                                                 }
-                                                if (especial[i].x >= bomba2.x && especial[i].x <= bomba2.x + al_get_bitmap_width(bomba2.bitmap) &&
-                                                    especial[i].y >= bomba2.y && especial[i].y <= bomba2.y + al_get_bitmap_height(bomba2.bitmap))
+                                                if (especial[i].x >= bomba2->x && especial[i].x <= bomba2->x + al_get_bitmap_width(bomba2->bitmap) &&
+                                                    especial[i].y >= bomba2->y && especial[i].y <= bomba2->y + al_get_bitmap_height(bomba2->bitmap))
                                                 {
-                                                    bomba2.hits++;
+                                                    bomba2->hits++;
                                                     pontuacao += 5;
                                                     especial[i].active = false;
                                                 }     
                                                 if (especial2[i].active){
-                                                // Colisão com a bomba
-                                                if (especial2[i].x >= bomba.x && especial2[i].x <= bomba.x + al_get_bitmap_width(bomba.bitmap) &&
-                                                    especial2[i].y >= bomba.y && especial2[i].y <= bomba.y + al_get_bitmap_height(bomba.bitmap))
+                                                if (especial2[i].x >= bomba->x && especial2[i].x <= bomba->x + al_get_bitmap_width(bomba->bitmap) &&
+                                                    especial2[i].y >= bomba->y && especial2[i].y <= bomba->y + al_get_bitmap_height(bomba->bitmap))
                                                 {
-                                                    bomba.hits++;
+                                                    bomba->hits++;
                                                     pontuacao += 3;
                                                     especial2[i].active = false;
                                                 }
 
-                                                if (especial2[i].x >= Aviao1.x && especial2[i].x <= Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) &&
-                                                    especial2[i].y >= Aviao1.y && especial2[i].y <= Aviao1.y + al_get_bitmap_height(Aviao1.bitmap))
+                                                if (especial2[i].x >= Aviao1->x && especial2[i].x <= Aviao1->x + al_get_bitmap_width(Aviao1->bitmap) &&
+                                                    especial2[i].y >= Aviao1->y && especial2[i].y <= Aviao1->y + al_get_bitmap_height(Aviao1->bitmap))
                                                 {
-                                                    Aviao1.hits++;
+                                                    Aviao1->hits++;
                                                     pontuacao += 5;
                                                     especial2[i].active = false;
                                                 }
-                                                if (especial2[i].x >= bomba2.x && especial2[i].x <= bomba2.x + al_get_bitmap_width(bomba2.bitmap) &&
-                                                    especial2[i].y >= bomba2.y && especial2[i].y <= bomba2.y + al_get_bitmap_height(bomba2.bitmap))
+                                                if (especial2[i].x >= bomba2->x && especial2[i].x <= bomba2->x + al_get_bitmap_width(bomba2->bitmap) &&
+                                                    especial2[i].y >= bomba2->y && especial2[i].y <= bomba2->y + al_get_bitmap_height(bomba2->bitmap))
                                                 {
-                                                    bomba2.hits++;
+                                                    bomba2->hits++;
                                                     pontuacao += 5;
                                                     especial2[i].active = false;
                                                 }                      
@@ -807,59 +833,59 @@ int main()
                                         }
 
                                         }
-                                        if (bomba.active)
+                                        if (bomba->active)
                                         {
-                                            if (bomba.x + al_get_bitmap_width(bomba.bitmap) > x &&
-                                                bomba.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                bomba.y + al_get_bitmap_height(bomba.bitmap) > y &&
-                                                bomba.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (bomba->x + al_get_bitmap_width(bomba->bitmap) > x &&
+                                                bomba->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                bomba->y + al_get_bitmap_height(bomba->bitmap) > y &&
+                                                bomba->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
                                                 printf("Bomba atingiu - linha 803");
-                                                bomba.x = X_SCREEN + 100;
-                                                bomba.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba.bitmap));
+                                                bomba->x = X_SCREEN + 100;
+                                                bomba->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba->bitmap));
                                                 bomba_mov = 0;
                                             }
                                         }
-                                        if (bomba2.active)
+                                        if (bomba2->active)
                                         {
-                                            if (bomba2.x + al_get_bitmap_width(bomba2.bitmap) > x &&
-                                                bomba2.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                bomba2.y + al_get_bitmap_height(bomba2.bitmap) > y &&
-                                                bomba2.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (bomba2->x + al_get_bitmap_width(bomba2->bitmap) > x &&
+                                                bomba2->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                bomba2->y + al_get_bitmap_height(bomba2->bitmap) > y &&
+                                                bomba2->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
                                                 printf("Bomba2 atingiu - linha 819");
-                                                bomba2.x = X_SCREEN + 100;
-                                                bomba2.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2.bitmap));
+                                                bomba2->x = X_SCREEN + 100;
+                                                bomba2->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2->bitmap));
                                             }
                                         }
-                                        if (Aviao1.active)
+                                        if (Aviao1->active)
                                         {
-                                            if (Aviao1.x + al_get_bitmap_width(Aviao1.bitmap) > x &&
-                                                Aviao1.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao1.y + al_get_bitmap_height(Aviao1.bitmap) > y &&
-                                                Aviao1.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao1->x + al_get_bitmap_width(Aviao1->bitmap) > x &&
+                                                Aviao1->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao1->y + al_get_bitmap_height(Aviao1->bitmap) > y &&
+                                                Aviao1->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
                                                 printf("Aviao1 atingiu - linha 834");
-                                                Aviao1.x = X_SCREEN + 100;
-                                                Aviao1.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao1.bitmap));
+                                                Aviao1->x = X_SCREEN + 100;
+                                                Aviao1->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao1->bitmap));
                                             }
                                         }
                                         for (int d = 0; d < 5; d++) {
                                         if (bullets_inimigos[d].active) {
                                                 float largura_tiro = 40;
-                                                float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                                float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                                float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                                float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
-                                                // Retângulo do tiro
+                                                // Retângulo do tiro    
                                                 float tiro_x_min = bullets_inimigos[d].x;
                                                 float tiro_x_max = bullets_inimigos[d].x + largura_tiro;
                                                 float tiro_y_min = bullets_inimigos[d].y;
@@ -876,15 +902,15 @@ int main()
                                                 if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                                     tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max) {
                                                     
-                                                    sprite.hits++;
+                                                    sprite->hits++;
                                                     pontuacao -= 2;
                                                     bullets_inimigos[d].active = false; // Desativa o tiro
                                                 }
                                             }
                                                 if (bullets_inimigos2[d].active) {
                                                 float largura_tiro = 40;
-                                                float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                                float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                                float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                                float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                                 // Retângulo do tiro
                                                 float tiro_x_min = bullets_inimigos2[d].x;
@@ -906,48 +932,47 @@ int main()
                                                             if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                                     tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max) {
                                                     
-                                                    sprite.hits++;
+                                                    sprite->hits++;
                                                     pontuacao -= 2;
                                                     bullets_inimigos2[d].active = false; // Desativa o tiro
                                                 }
                                             }
                                         }
-                                        if (bomba.hits >= 3)
-                                        {
-                                            bomba.x = X_SCREEN + 100;
-                                            bomba.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba.bitmap));
-                                            bomba.hits = 0;
-                                            bomba.active = true;
+                                        if (bomba->hits >= 3){
+                                            bomba->x = X_SCREEN + 100;
+                                            bomba->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba->bitmap));
+                                            bomba->hits = 0;
+                                            bomba->active = true;
                                             bomba_mov  =0;
                                         }
 
-                                        if (Aviao1.hits >= 3)
+                                        if (Aviao1->hits >= 3)
                                         {
-                                            Aviao1.active = false;
+                                            Aviao1->active = false;
                                         }
 
 
-                                        if (bomba2.hits >= 2)
+                                        if (bomba2->hits >= 2)
                                         {
-                                            bomba2.x = X_SCREEN + 100;
-                                            bomba2.y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2.bitmap));
-                                            bomba2.hits = 0;
-                                            bomba2.active = true;
+                                            bomba2->x = X_SCREEN + 100;
+                                            bomba2->y = rand() % (Y_SCREEN - al_get_bitmap_height(bomba2->bitmap));
+                                            bomba2->hits = 0;
+                                            bomba2->active = true;
                                         }
 
                                         //! desenha os inimigos da fase
-                                        if (bomba.active)
+                                        if (bomba->active)
                                         {
-                                            al_draw_bitmap(bomba.bitmap, bomba.x, bomba.y, 0);
+                                            al_draw_bitmap(bomba->bitmap, bomba->x, bomba->y, 0);
                                         }
 
-                                        if (bomba2.active)
+                                        if (bomba2->active)
                                         {
-                                            al_draw_bitmap(bomba2.bitmap, bomba2.x, bomba2.y, 0);
+                                            al_draw_bitmap(bomba2->bitmap, bomba2->x, bomba2->y, 0);
                                         }
-                                        if (Aviao1.active)
+                                        if (Aviao1->active)
                                         {
-                                            al_draw_bitmap(Aviao1.bitmap, Aviao1.x, Aviao1.y, 0);
+                                            al_draw_bitmap(Aviao1->bitmap, Aviao1->x, Aviao1->y, 0);
                                         }
 
                                         
@@ -980,16 +1005,16 @@ int main()
 
                         }else{ 
                    //* ativa o vilão ou desativa
-                            if (vilao1.hits >= 15){
+                            if (vilao1->hits >= 15){
                                 personagem=2;
                                     al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "NÃOOOOOOOOOO");
                                 
                             }
 
-                            if (vilao1.hits >= 20){
+                            if (vilao1->hits >= 20){
                             
-                                vilao1.active = false;
-                                sprite.hits = 0;
+                                vilao1->active = false;
+                                sprite->hits = 0;
                                 final = 0;
                                 fase = 4;
                                 personagem =0;
@@ -1010,9 +1035,9 @@ int main()
                             }
 
                             if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)) {
-                                    vilao1.x = X_SCREEN -100;
+                                    vilao1->x = X_SCREEN -100;
                             
-                                al_draw_bitmap(vilao1.bitmap, vilao1.x, vilao1.y, 0);
+                                al_draw_bitmap(vilao1->bitmap, vilao1->x, vilao1->y, 0);
                             
                                 //* desenha os tiros horizontais
                                 for (int i = 0; i < 5; i++)
@@ -1031,16 +1056,16 @@ int main()
                                 ps = 5;
                                 if (mov_v1 == 1)
                                 {
-                                    vilao1.y -= ps;
-                                    if (vilao1.y <= 60)
+                                    vilao1->y -= ps;
+                                    if (vilao1->y <= 60)
                                     {
                                         mov_v1 = 2;
                                     }
                                 }
                                 else
                                 {
-                                    vilao1.y += ps;
-                                    if (vilao1.y + al_get_bitmap_height(vilao1.bitmap) >= Y_SCREEN)
+                                    vilao1->y += ps;
+                                    if (vilao1->y + al_get_bitmap_height(vilao1->bitmap) >= Y_SCREEN)
                                     {
                                         mov_v1 = 1;
                                     }
@@ -1052,17 +1077,17 @@ int main()
                             }
 
                             if ((segundos > final_branco && segundos <= final_com_vertical)  || (segundos > final_branco3 && segundos <= final_vertical2) ){
-                                al_draw_bitmap(vilao1.bitmap, vilao1.x, 20, 0);
+                                al_draw_bitmap(vilao1->bitmap, vilao1->x, 20, 0);
                                 ps = 3;
                                 if (mov_v1 == 1){
-                                    vilao1.x -= ps;
-                                    if (vilao1.x <= 0)
+                                    vilao1->x -= ps;
+                                    if (vilao1->x <= 0)
                                     {
                                         mov_v1 = 2;
                                     }
                                 }else{
-                                    vilao1.x += ps;
-                                    if (vilao1.x + al_get_bitmap_height(vilao1.bitmap) >= X_SCREEN)
+                                    vilao1->x += ps;
+                                    if (vilao1->x + al_get_bitmap_height(vilao1->bitmap) >= X_SCREEN)
                                     {
                                         mov_v1 = 1;
                                     }
@@ -1102,16 +1127,16 @@ int main()
 
                             if (segundos == final_branco2 || segundos == final_vertical2){
                                 al_clear_to_color(al_map_rgb(255, 255, 255));
-                                vilao1.y = Y_SCREEN / 2;
+                                vilao1->y = Y_SCREEN / 2;
                             }
 
                             if (milisegundos % 30 == 0){
-                                if (vilao1.active){
-                                    if (vilao1.x + al_get_bitmap_width(vilao1.bitmap) > x &&
-                                        vilao1.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                        vilao1.y + al_get_bitmap_height(vilao1.bitmap) > y &&
-                                        vilao1.y < y + al_get_bitmap_height(sprite.bitmap)){
-                                            sprite.hits++;
+                                if (vilao1->active){
+                                    if (vilao1->x + al_get_bitmap_width(vilao1->bitmap) > x &&
+                                        vilao1->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                        vilao1->y + al_get_bitmap_height(vilao1->bitmap) > y &&
+                                        vilao1->y < y + al_get_bitmap_height(sprite->bitmap)){
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                     }
                                 }
@@ -1120,11 +1145,11 @@ int main()
                             for (int i = 0; i < 5; i++){
                                 if (bullets[i].active)
                                 {
-                                    if (bullets[i].x >= vilao1.x && bullets[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
-                                        bullets[i].y >= vilao1.y && bullets[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
+                                    if (bullets[i].x >= vilao1->x && bullets[i].x <= vilao1->x + al_get_bitmap_width(vilao1->bitmap) &&
+                                        bullets[i].y >= vilao1->y && bullets[i].y <= vilao1->y + al_get_bitmap_height(vilao1->bitmap))
                                     {
                                         bullets[i].active = false; 
-                                        vilao1.hits++;             
+                                        vilao1->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (bullets[i].x < 0 || bullets[i].x > X_SCREEN || bullets[i].y < 0 || bullets[i].y > Y_SCREEN)
@@ -1133,11 +1158,11 @@ int main()
                                     }
                                 }
                                 if (especial[i].active){
-                                    if (especial[i].x >= vilao1.x && especial[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
-                                        especial[i].y >= vilao1.y && especial[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
+                                    if (especial[i].x >= vilao1->x && especial[i].x <= vilao1->x + al_get_bitmap_width(vilao1->bitmap) &&
+                                        especial[i].y >= vilao1->y && especial[i].y <= vilao1->y + al_get_bitmap_height(vilao1->bitmap))
                                     {
                                         especial[i].active = false; 
-                                        vilao1.hits++;             
+                                        vilao1->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (especial[i].x < 0 || especial[i].x > X_SCREEN || especial[i].y < 0 || especial[i].y > Y_SCREEN)
@@ -1146,11 +1171,11 @@ int main()
                                     }
                                 }
                                 if (especial2[i].active){
-                                    if (especial2[i].x >= vilao1.x && especial2[i].x <= vilao1.x + al_get_bitmap_width(vilao1.bitmap) &&
-                                        especial2[i].y >= vilao1.y && especial2[i].y <= vilao1.y + al_get_bitmap_height(vilao1.bitmap))
+                                    if (especial2[i].x >= vilao1->x && especial2[i].x <= vilao1->x + al_get_bitmap_width(vilao1->bitmap) &&
+                                        especial2[i].y >= vilao1->y && especial2[i].y <= vilao1->y + al_get_bitmap_height(vilao1->bitmap))
                                     {
                                         especial2[i].active = false; 
-                                        vilao1.hits++;             
+                                        vilao1->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (especial2[i].x < 0 || especial2[i].x > X_SCREEN || especial2[i].y < 0 || especial2[i].y > Y_SCREEN)
@@ -1165,8 +1190,8 @@ int main()
                                 if (tiros_v1[d].active){
                                     float largura_tiro = 40;
                                     
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro
                                     float tiro_x_min = tiros_v1[d].x;
@@ -1184,15 +1209,15 @@ int main()
 
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
-                                            sprite.hits++;
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                             tiros_v1[d].active = false; // Desativa o tiro
                                     }
                                 }
                                 if (tiros_v1_2[d].active){
                                     float largura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro
                                     float tiro_x_min = tiros_v1_2[d].x;
@@ -1211,7 +1236,7 @@ int main()
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
 
-                                        sprite.hits++;
+                                        sprite->hits++;
                                         pontuacao -= 2;
                                         tiros_v1_2[d].active = false; // Desativa o tiro
                                     }
@@ -1221,8 +1246,8 @@ int main()
                                     
                                     float largura_tiro = 40;
                                     float altura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro (área de detecção vertical)
                                     float tiro_x_min = tiros_v1_vertical[d].x;
@@ -1239,7 +1264,7 @@ int main()
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
 
-                                        sprite.hits++;
+                                        sprite->hits++;
                                         pontuacao -= 2;
                                         tiros_v1_vertical[d].active = false; // Desativa o tiro após a colisão
                                     }
@@ -1251,69 +1276,73 @@ int main()
                     
                     if(segundos >= 3){
                     
-                        if(tiro_longo_map.active){    al_draw_scaled_bitmap(
-                                tiro_longo_map.bitmap,
+                        if(tiro_longo_map->active){    al_draw_scaled_bitmap(
+                                tiro_longo_map->bitmap,
                                 0, 0,
-                                al_get_bitmap_width(tiro_longo_map.bitmap),
-                                al_get_bitmap_height(tiro_longo_map.bitmap),
-                                tiro_longo_map.x, tiro_longo_map.y,
+                                al_get_bitmap_width(tiro_longo_map->bitmap),
+                                al_get_bitmap_height(tiro_longo_map->bitmap),
+                                tiro_longo_map->x, tiro_longo_map->y,
                                 60, 60, 0);
                             
-                            tiro_longo_map.x -=3;
+                            tiro_longo_map->x -=3;
                         }
                     }
-                    if (tiro_longo_map.active)
+                    if (tiro_longo_map->active)
                     {
-                        if (tiro_longo_map.x + al_get_bitmap_width(tiro_longo_map.bitmap) > x &&
-                            tiro_longo_map.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                            tiro_longo_map.y + al_get_bitmap_height(tiro_longo_map.bitmap) > y &&
-                            tiro_longo_map.y < y + al_get_bitmap_height(sprite.bitmap))
+                        if (tiro_longo_map->x + al_get_bitmap_width(tiro_longo_map->bitmap) > x &&
+                            tiro_longo_map->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                            tiro_longo_map->y + al_get_bitmap_height(tiro_longo_map->bitmap) > y &&
+                            tiro_longo_map->y < y + al_get_bitmap_height(sprite->bitmap))
                         {
-                            tiro_longo_map.active=false;
+                            tiro_longo_map->active=false;
                             pontuacao +=5;
                             tiro_longo = true;
                         }
                     }
-                    if(tiro_longo ){
-                        tiro_longo=false;
-                    }
+
                     if(segundos == 10){
-                        tiro_longo_map.x = X_SCREEN +80;
-                        tiro_longo_map.active = true;
+                        tiro_longo_map->x = X_SCREEN +80;
+                        tiro_longo_map->active = true;
 
                     }
                     if(segundos >= 3){
                     
-                        if(tiro_longo_map.active){    
+                        if(tiro_longo_map->active){    
                             al_draw_scaled_bitmap(
-                                tiro_longo_map.bitmap,
+                                tiro_longo_map->bitmap,
                                 0, 0,
-                                al_get_bitmap_width(tiro_longo_map.bitmap),
-                                al_get_bitmap_height(tiro_longo_map.bitmap),
-                                tiro_longo_map.x, tiro_longo_map.y,
+                                al_get_bitmap_width(tiro_longo_map->bitmap),
+                                al_get_bitmap_height(tiro_longo_map->bitmap),
+                                tiro_longo_map->x, tiro_longo_map->y,
                                 60, 60, 0);
                             
-                            tiro_longo_map.x -=3;
+                            tiro_longo_map->x -=3;
                         }
-                        if(tiro_longo_map.x < 0){
-                            tiro_longo_map.active = false;
+                        if(tiro_longo_map->x < 0){
+                            tiro_longo_map->active = false;
                         }
                     }
-                    if (tiro_longo_map.active)
+                    if (tiro_longo_map->active)
                     {
-                        if (tiro_longo_map.x + al_get_bitmap_width(tiro_longo_map.bitmap) > x &&
-                            tiro_longo_map.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                            tiro_longo_map.y + al_get_bitmap_height(tiro_longo_map.bitmap) > y &&
-                            tiro_longo_map.y < y + al_get_bitmap_height(sprite.bitmap))
+                        if (tiro_longo_map->x + al_get_bitmap_width(tiro_longo_map->bitmap) > x &&
+                            tiro_longo_map->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                            tiro_longo_map->y + al_get_bitmap_height(tiro_longo_map->bitmap) > y &&
+                            tiro_longo_map->y < y + al_get_bitmap_height(sprite->bitmap))
                         {
-                            tiro_longo_map.active=false;
-                            pontuacao +=5;
-                            
-                        
+                            tiro_longo_map->active=false;
+                            pontuacao +=5;                            
+
+                            if(segundos >=8){
+                                tiro_longo =1;
+                            }
+                            if(segundos <10){
                             tiro_transv = 1;
+                            }
                             ppower =4;
+                        
                         }
                     }
+                    
                 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1351,18 +1380,18 @@ int main()
                                         ps = 5;
                                             if (mov_v1 == 1)
                                             {
-                                                Aviao3.y -= ps;
-                                                Aviao3.x -=ps;
-                                                if (Aviao3.y <= 60)
+                                                Aviao3->y -= ps;
+                                                Aviao3->x -=ps;
+                                                if (Aviao3->y <= 60)
                                                 {
                                                     mov_v1 = 2;
                                                 }
                                             }
                                             else
                                             {
-                                                Aviao3.y += ps;
-                                                Aviao3.x -=ps;
-                                                if (Aviao3.y + al_get_bitmap_height(Aviao3.bitmap) >= (Y_SCREEN/2))
+                                                Aviao3->y += ps;
+                                                Aviao3->x -=ps;
+                                                if (Aviao3->y + al_get_bitmap_height(Aviao3->bitmap) >= (Y_SCREEN/2))
                                                 {
                                                     mov_v1 = 1;
                                                 }
@@ -1371,18 +1400,18 @@ int main()
 
                                         if (mov_v2 == 1)
                                         {
-                                            Aviao4.y -= ps;
-                                                Aviao4.x -=ps;
-                                                if (Aviao4.y <= (Y_SCREEN/2))
+                                            Aviao4->y -= ps;
+                                                Aviao4->x -=ps;
+                                                if (Aviao4->y <= (Y_SCREEN/2))
                                                 {
                                                     mov_v2 = 2;
                                                 }
                                             }
                                             else
                                             {
-                                                Aviao4.y += ps;
-                                                Aviao4.x -=ps;
-                                                if (Aviao4.y + al_get_bitmap_height(Aviao4.bitmap) >= Y_SCREEN)
+                                                Aviao4->y += ps;
+                                                Aviao4->x -=ps;
+                                                if (Aviao4->y + al_get_bitmap_height(Aviao4->bitmap) >= Y_SCREEN)
                                                 {
                                                     mov_v2 = 1;
                                                 }
@@ -1391,41 +1420,41 @@ int main()
 
                                         //! Atualiza a posição do avião inimigo vertical
                                         if (segundos % 4 == 0) {
-                                            Aviao2.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao2.bitmap));
+                                            Aviao2->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao2->bitmap));
                                         }
 
 
-                                        if (Aviao3.active)
+                                        if (Aviao3->active)
                                         {
-                                            if (Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) > x &&
-                                                Aviao3.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao3.y + al_get_bitmap_height(Aviao3.bitmap) > y &&
-                                                Aviao3.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao3->x + al_get_bitmap_width(Aviao3->bitmap) > x &&
+                                                Aviao3->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao3->y + al_get_bitmap_height(Aviao3->bitmap) > y &&
+                                                Aviao3->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
                                                 pontuacao -= 5;
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 printf("Bomba atingiu - linha 742");
 
-                                                Aviao3.x = X_SCREEN + 100;
-                                                Aviao3.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3.bitmap));
+                                                Aviao3->x = X_SCREEN + 100;
+                                                Aviao3->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3->bitmap));
                                             }
                                         }
 
 
                                         /////////////////////////!
-                                        if (Aviao4.active)
+                                        if (Aviao4->active)
                                         {
-                                            if (Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) > x &&
-                                                Aviao4.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao4.y + al_get_bitmap_height(Aviao4.bitmap) > y &&
-                                                Aviao4.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao4->x + al_get_bitmap_width(Aviao4->bitmap) > x &&
+                                                Aviao4->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao4->y + al_get_bitmap_height(Aviao4->bitmap) > y &&
+                                                Aviao4->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
                                                 pontuacao -= 5;
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 printf("Bomba atingiu - linha 742");
 
-                                                Aviao4.x = X_SCREEN + 100;
-                                                Aviao4.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4.bitmap));
+                                                Aviao4->x = X_SCREEN + 100;
+                                                Aviao4->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4->bitmap));
                                             }
                                         }
 
@@ -1434,156 +1463,154 @@ int main()
                                             if (bullets[i].active)
                                             {
                                                 // Colisão com a bomba
-                                                if (bullets[i].x >= Aviao4.x && bullets[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
-                                                    bullets[i].y >= Aviao4.y && bullets[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                if (bullets[i].x >= Aviao4->x && bullets[i].x <= Aviao4->x + al_get_bitmap_width(Aviao4->bitmap) &&
+                                                    bullets[i].y >= Aviao4->y && bullets[i].y <= Aviao4->y + al_get_bitmap_height(Aviao4->bitmap))
                                                 {
-                                                    Aviao4.hits++;
+                                                    Aviao4->hits++;
                                                     pontuacao += 3;
                                                     bullets[i].active = false;
                                                 }
 
-                                                if (bullets[i].x >= Aviao3.x && bullets[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
-                                                    bullets[i].y >= Aviao3.y && bullets[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
+                                                if (bullets[i].x >= Aviao3->x && bullets[i].x <= Aviao3->x + al_get_bitmap_width(Aviao3->bitmap) &&
+                                                    bullets[i].y >= Aviao3->y && bullets[i].y <= Aviao3->y + al_get_bitmap_height(Aviao3->bitmap))
                                                 {
-                                                    Aviao3.hits++;
+                                                    Aviao3->hits++;
                                                     pontuacao += 3;
                                                     bullets[i].active = false;
                                                 }
 
-                                                if (bullets[i].x >= Aviao2.x && bullets[i].x <= Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) &&
-                                                    bullets[i].y >= Aviao2.y && bullets[i].y <= Aviao2.y + al_get_bitmap_height(Aviao2.bitmap))
+                                                if (bullets[i].x >= Aviao2->x && bullets[i].x <= Aviao2->x + al_get_bitmap_width(Aviao2->bitmap) &&
+                                                    bullets[i].y >= Aviao2->y && bullets[i].y <= Aviao2->y + al_get_bitmap_height(Aviao2->bitmap))
                                                 {
-                                                    Aviao2.hits++;
+                                                    Aviao2->hits++;
                                                     pontuacao += 5;
                                                     bullets[i].active = false;
                                                 }
                                         }
                                         if (especial2[i].active)
                                             {
-                                                // Colisão com a bomba
-                                                if (especial2[i].x >= Aviao4.x && especial2[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
-                                                    especial2[i].y >= Aviao4.y && especial2[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                if (especial2[i].x >= Aviao4->x && especial2[i].x <= Aviao4->x + al_get_bitmap_width(Aviao4->bitmap) &&
+                                                    especial2[i].y >= Aviao4->y && especial2[i].y <= Aviao4->y + al_get_bitmap_height(Aviao4->bitmap))
                                                 {
-                                                    Aviao4.hits++;
+                                                    Aviao4->hits++;
                                                     pontuacao += 3;
                                                     especial2[i].active = false;
                                                 }
 
-                                                if (especial2[i].x >= Aviao3.x && especial2[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
-                                                    especial2[i].y >= Aviao3.y && especial2[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
+                                                if (especial2[i].x >= Aviao3->x && especial2[i].x <= Aviao3->x + al_get_bitmap_width(Aviao3->bitmap) &&
+                                                    especial2[i].y >= Aviao3->y && especial2[i].y <= Aviao3->y + al_get_bitmap_height(Aviao3->bitmap))
                                                 {
-                                                    Aviao3.hits++;
+                                                    Aviao3->hits++;
                                                     pontuacao += 3;
                                                     especial2[i].active = false;
                                                 }
 
-                                                if (especial2[i].x >= Aviao2.x && especial2[i].x <= Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) &&
-                                                    especial2[i].y >= Aviao2.y && especial2[i].y <= Aviao2.y + al_get_bitmap_height(Aviao2.bitmap))
+                                                if (especial2[i].x >= Aviao2->x && especial2[i].x <= Aviao2->x + al_get_bitmap_width(Aviao2->bitmap) &&
+                                                    especial2[i].y >= Aviao2->y && especial2[i].y <= Aviao2->y + al_get_bitmap_height(Aviao2->bitmap))
                                                 {
-                                                    Aviao2.hits++;
+                                                    Aviao2->hits++;
                                                     pontuacao += 5;
                                                     especial2[i].active = false;
                                                 }
                                         }
                                         if (especial[i].active)
                                             {
-                                                // Colisão com a bomba
-                                                if (especial[i].x >= Aviao4.x && especial[i].x <= Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) &&
-                                                    especial[i].y >= Aviao4.y && especial[i].y <= Aviao4.y + al_get_bitmap_height(Aviao4.bitmap))
+                                                if (especial[i].x >= Aviao4->x && especial[i].x <= Aviao4->x + al_get_bitmap_width(Aviao4->bitmap) &&
+                                                    especial[i].y >= Aviao4->y && especial[i].y <= Aviao4->y + al_get_bitmap_height(Aviao4->bitmap))
                                                 {
-                                                    Aviao4.hits++;
+                                                    Aviao4->hits++;
                                                     pontuacao += 3;
                                                     especial[i].active = false;
                                                 }
 
-                                                if (especial[i].x >= Aviao3.x && especial[i].x <= Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) &&
-                                                    especial[i].y >= Aviao3.y && especial[i].y <= Aviao3.y + al_get_bitmap_height(Aviao3.bitmap))
+                                                if (especial[i].x >= Aviao3->x && especial[i].x <= Aviao3->x + al_get_bitmap_width(Aviao3->bitmap) &&
+                                                    especial[i].y >= Aviao3->y && especial[i].y <= Aviao3->y + al_get_bitmap_height(Aviao3->bitmap))
                                                 {
-                                                    Aviao3.hits++;
+                                                    Aviao3->hits++;
                                                     pontuacao += 3;
                                                     especial[i].active = false;
                                                 }
 
-                                                if (especial[i].x >= Aviao2.x && especial[i].x <= Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) &&
-                                                    especial[i].y >= Aviao2.y && especial[i].y <= Aviao2.y + al_get_bitmap_height(Aviao2.bitmap))
+                                                if (especial[i].x >= Aviao2->x && especial[i].x <= Aviao2->x + al_get_bitmap_width(Aviao2->bitmap) &&
+                                                    especial[i].y >= Aviao2->y && especial[i].y <= Aviao2->y + al_get_bitmap_height(Aviao2->bitmap))
                                                 {
-                                                    Aviao2.hits++;
+                                                    Aviao2->hits++;
                                                     pontuacao += 5;
                                                     especial[i].active = false;
                                                 }
                                         }
                                         }
-                                        if(Aviao3.x<0){
-                                            Aviao3.x = X_SCREEN + 100;
-                                            Aviao3.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3.bitmap));
+                                        if(Aviao3->x<0){
+                                            Aviao3->x = X_SCREEN + 100;
+                                            Aviao3->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3->bitmap));
                                         }
-                                        if (Aviao3.active)
+                                        if (Aviao3->active)
                                         {
-                                            if (Aviao3.x + al_get_bitmap_width(Aviao3.bitmap) > x &&
-                                                Aviao3.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao3.y + al_get_bitmap_height(Aviao3.bitmap) > y &&
-                                                Aviao3.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao3->x + al_get_bitmap_width(Aviao3->bitmap) > x &&
+                                                Aviao3->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao3->y + al_get_bitmap_height(Aviao3->bitmap) > y &&
+                                                Aviao3->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
-                                                Aviao3.x = X_SCREEN + 100;
-                                                Aviao3.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3.bitmap));
+                                                Aviao3->x = X_SCREEN + 100;
+                                                Aviao3->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3->bitmap));
                                             }
                                         }
-                                        if(Aviao4.x<0){
-                                            Aviao4.x = X_SCREEN + 100;
-                                            Aviao4.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4.bitmap));
+                                        if(Aviao4->x<0){
+                                            Aviao4->x = X_SCREEN + 100;
+                                            Aviao4->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4->bitmap));
                                         }
-                                        if (Aviao4.active)
+                                        if (Aviao4->active)
                                         {
-                                            if (Aviao4.x + al_get_bitmap_width(Aviao4.bitmap) > x &&
-                                                Aviao4.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao4.y + al_get_bitmap_height(Aviao4.bitmap) > y &&
-                                                Aviao4.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao4->x + al_get_bitmap_width(Aviao4->bitmap) > x &&
+                                                Aviao4->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao4->y + al_get_bitmap_height(Aviao4->bitmap) > y &&
+                                                Aviao4->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
-                                                Aviao4.x = X_SCREEN + 100;
-                                                Aviao4.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4.bitmap));
+                                                Aviao4->x = X_SCREEN + 100;
+                                                Aviao4->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4->bitmap));
                                             }
                                         }
 
-                                        if (Aviao2.active)
+                                        if (Aviao2->active)
                                         {
-                                            if (Aviao2.x + al_get_bitmap_width(Aviao2.bitmap) > x &&
-                                                Aviao2.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                                Aviao2.y + al_get_bitmap_height(Aviao2.bitmap) > y &&
-                                                Aviao2.y < y + al_get_bitmap_height(sprite.bitmap))
+                                            if (Aviao2->x + al_get_bitmap_width(Aviao2->bitmap) > x &&
+                                                Aviao2->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                                Aviao2->y + al_get_bitmap_height(Aviao2->bitmap) > y &&
+                                                Aviao2->y < y + al_get_bitmap_height(sprite->bitmap))
                                             {
 
-                                                sprite.hits++;
+                                                sprite->hits++;
                                                 pontuacao -= 2;
                                                 printf("Aviao2 atingiu - linha 834");
-                                                Aviao2.x = X_SCREEN + 100;
-                                                Aviao2.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao2.bitmap));
+                                                Aviao2->x = X_SCREEN + 100;
+                                                Aviao2->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao2->bitmap));
                                             }
                                         }
-                                        if (Aviao3.hits >= 4)
+                                        if (Aviao3->hits >= 4)
                                         {
-                                            Aviao3.x = X_SCREEN + 100;
-                                            Aviao3.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3.bitmap));
-                                            Aviao3.hits = 0;
-                                            Aviao3.active = true;
+                                            Aviao4->x = X_SCREEN + 100;
+                                            Aviao4->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao3->bitmap));
+                                            Aviao4->hits = 0;
+                                            Aviao4->active = true;
                                         }
 
-                                        if (Aviao4.hits >= 4)
+                                        if (Aviao4->hits >= 4)
                                         {
-                                            Aviao4.x = X_SCREEN + 100;
-                                            Aviao4.y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4.bitmap));
-                                            Aviao4.hits = 0;
-                                            Aviao4.active = true;
+                                            Aviao3->x = X_SCREEN + 100;
+                                            Aviao3->y = rand() % (Y_SCREEN - al_get_bitmap_height(Aviao4->bitmap));
+                                            Aviao3->hits = 0;
+                                            Aviao3->active = true;
                                         }
 
-                                        if (Aviao2.hits >= 4)
+                                        if (Aviao2->hits >= 4)
                                         {
-                                            Aviao2.active = false;
+                                            Aviao2->active = false;
                                         }
 
 
@@ -1624,47 +1651,47 @@ int main()
                                         }
                                         }
                                         //! desenha os inimigos da fase
-                                        if (Aviao3.active)
+                                        if (Aviao3->active)
                                         {
-                                            al_draw_bitmap(Aviao3.bitmap, Aviao3.x, Aviao3.y, 0);
+                                            al_draw_bitmap(Aviao3->bitmap, Aviao3->x, Aviao3->y, 0);
                                         }
-                                        if (Aviao4.active)
+                                        if (Aviao4->active)
                                         {
-                                            al_draw_bitmap(Aviao4.bitmap, Aviao4.x, Aviao4.y, 0);
+                                            al_draw_bitmap(Aviao4->bitmap, Aviao4->x, Aviao4->y, 0);
                                         }
-                                        if (Aviao2.active)
+                                        if (Aviao2->active)
                                         {
-                                            al_draw_bitmap(Aviao2.bitmap, Aviao2.x, Aviao2.y, 0);
+                                            al_draw_bitmap(Aviao2->bitmap, Aviao2->x, Aviao2->y, 0);
                                         }
 
                                         if(segundos >= 7){
                                             al_draw_scaled_bitmap(
-                                                    tiro_longo_map.bitmap,
+                                                    tiro_longo_map->bitmap,
                                                     0, 0,
-                                                    al_get_bitmap_width(tiro_longo_map.bitmap),
-                                                    al_get_bitmap_height(tiro_longo_map.bitmap),
-                                                    tiro_longo_map.x, tiro_longo_map.y,
+                                                    al_get_bitmap_width(tiro_longo_map->bitmap),
+                                                    al_get_bitmap_height(tiro_longo_map->bitmap),
+                                                    tiro_longo_map->x, tiro_longo_map->y,
                                                     40, 40, 0);
                                                 
-                                                tiro_longo_map.x +=3;
+                                                tiro_longo_map->x +=3;
                                         }
 
                         }else{ 
                    //* ativa o vilão ou desativa
-                            if (vilao2.hits >= 30){
-                                vilao2.active = false;
-                                sprite.hits = 0;
+                            if (vilao2->hits >= 30){
+                                vilao2->active = false;
+                                sprite->hits = 0;
                                 final = 0;
                                 segundos_total = segundos;
                                 fase = 3;
                             }
 
-                        if (vilao2.hits >= 20 && vilao2.hits < 28){
+                        if (vilao2->hits >= 20 && vilao2->hits < 28){
                                 personagem=2;
                                 al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "EU NÃO CAIREI");
 
                             }
-                            if (vilao2.hits > 28){
+                            if (vilao2->hits > 28){
                                 personagem=2;
                                 al_draw_text(font2, al_map_rgb(1, 1, 1), X_SCREEN-480, Y_SCREEN -60, 0, "NÃOOOOO!");
 
@@ -1675,7 +1702,7 @@ int main()
 
                             //consertar os tiros horizontais
                             if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)) {
-                                    vilao2.x = X_SCREEN -100;
+                                    vilao2->x = X_SCREEN -100;
                             
                             if(segundos >= primeira_fase_comeco && segundos < (primeira_fase_comeco+2)){   
                             personagem=2;
@@ -1730,57 +1757,57 @@ int main()
                                 ps = 5;
                                 if (mov_v1 == 1)
                                 {
-                                    vilao2.y -= ps;
-                                    if (vilao2.y <= 60)
+                                    vilao2->y -= ps;
+                                    if (vilao2->y <= 60)
                                     {
                                         mov_v1 = 2;
                                     }
                                 }
                                 else
                                 {
-                                    vilao2.y += ps;
-                                    if (vilao2.y + al_get_bitmap_height(vilao2.bitmap) >= Y_SCREEN)
+                                    vilao2->y += ps;
+                                    if (vilao2->y + al_get_bitmap_height(vilao2->bitmap) >= Y_SCREEN)
                                     {
                                         mov_v1 = 1;
                                     }
                                 }
-                                al_draw_bitmap(vilao2.bitmap, vilao2.x, vilao2.y, 0);
+                                al_draw_bitmap(vilao2->bitmap, vilao2->x, vilao2->y, 0);
 
                             } //? acaba aqui os primeiros 10 segundos do vilão
 
                             if (segundos == final_branco ){ 
                                 al_clear_to_color(al_map_rgb(255, 255, 255));
-                                vilao2.y = Y_SCREEN / 2;
-                                vilao2.x = X_SCREEN / 2;                                
+                                vilao2->y = Y_SCREEN / 2;
+                                vilao2->x = X_SCREEN / 2;                                
                                 ctnl_tiros_vertical_v2 =true;
                             }
 
 
                             if(segundos > final_branco3 && segundos <= final_vertical2){
 
-                                al_draw_bitmap(vilao2.bitmap, vilao2.x, vilao2.y, 0);
+                                al_draw_bitmap(vilao2->bitmap, vilao2->x, vilao2->y, 0);
                                 ps = 30;
-                                if((vilao2.y <=600 && mov_v1!=2 &&  mov_v1!=3)){
-                                    vilao2.x -= ps+5; // Movimento na direção direita
-                                    vilao2.y += ps; // Movimento na direção para baixo
-                                    if((vilao2.y > 600)||(vilao2.x <= 0)){
+                                if((vilao2->y <=600 && mov_v1!=2 &&  mov_v1!=3)){
+                                    vilao2->x -= ps+5; // Movimento na direção direita
+                                    vilao2->y += ps; // Movimento na direção para baixo
+                                    if((vilao2->y > 600)||(vilao2->x <= 0)){
                                         mov_v1 =2;
                                         ctnl_vilao2 =1;
                                     }
                                 } 
                                 if(mov_v1 == 2){
-                                    vilao2.y-=ps;
-                                    if(vilao2.y <= 50 && ctnl_vilao2 ==1){
+                                    vilao2->y-=ps;
+                                    if(vilao2->y <= 50 && ctnl_vilao2 ==1){
                                         mov_v1=3;
                                     }
-                                    if(vilao2.y <= 50 && ctnl_vilao2 ==0){
+                                    if(vilao2->y <= 50 && ctnl_vilao2 ==0){
                                         mov_v1=1;
                                     }
                                 }
                                 if(mov_v1 ==3){
-                                    vilao2.x += ps+5; 
-                                    vilao2.y += ps; 
-                                    if((vilao2.y > 600)||(vilao2.x >= X_SCREEN)){
+                                    vilao2->x += ps+5; 
+                                    vilao2->y += ps; 
+                                    if((vilao2->y > 600)||(vilao2->x >= X_SCREEN)){
                                         mov_v1 =2;
                                         ctnl_vilao2 =0;
                                     }
@@ -1793,14 +1820,14 @@ int main()
                             if (segundos == final_branco2 || segundos == final_vertical2){
                                 al_clear_to_color(al_map_rgb(255, 255, 255));
 
-                                vilao2.y = 50;
+                                vilao2->y = 50;
                                 mov_v1=1;
 
                             }
                             if(segundos == final_branco3 ){  
                                 al_clear_to_color(al_map_rgb(255, 255, 255));
-                                vilao2.y = Y_SCREEN / 2;
-                                vilao2.x = X_SCREEN / 2;;
+                                vilao2->y = Y_SCREEN / 2;
+                                vilao2->x = X_SCREEN / 2;;
                                 mov_v1=1;}
                             if(final_com_vertical == segundos){
                                 ctnl_tiros_vertical_v2 =false;
@@ -1871,18 +1898,18 @@ int main()
                                     }
 
                                 }                            
-                                al_draw_bitmap(vilao2.bitmap, vilao2.x, vilao2.y, 0);
+                                al_draw_bitmap(vilao2->bitmap, vilao2->x, vilao2->y, 0);
 
                             }
 
 
                             if (milisegundos % 30 == 0){
-                                if (vilao2.active){
-                                    if (vilao2.x + al_get_bitmap_width(vilao2.bitmap) > x &&
-                                        vilao2.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                                        vilao2.y + al_get_bitmap_height(vilao2.bitmap) > y &&
-                                        vilao2.y < y + al_get_bitmap_height(sprite.bitmap)){
-                                            sprite.hits++;
+                                if (vilao2->active){
+                                    if (vilao2->x + al_get_bitmap_width(vilao2->bitmap) > x &&
+                                        vilao2->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                                        vilao2->y + al_get_bitmap_height(vilao2->bitmap) > y &&
+                                        vilao2->y < y + al_get_bitmap_height(sprite->bitmap)){
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                     }
                                 }
@@ -1891,11 +1918,11 @@ int main()
                             for (int i = 0; i < 5; i++){
                                 if (bullets[i].active)
                                 {
-                                    if (bullets[i].x >= vilao2.x && bullets[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
-                                        bullets[i].y >= vilao2.y && bullets[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
+                                    if (bullets[i].x >= vilao2->x && bullets[i].x <= vilao2->x + al_get_bitmap_width(vilao2->bitmap) &&
+                                        bullets[i].y >= vilao2->y && bullets[i].y <= vilao2->y + al_get_bitmap_height(vilao2->bitmap))
                                     {
                                         bullets[i].active = false; 
-                                        vilao2.hits++;             
+                                        vilao2->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (bullets[i].x < 0 || bullets[i].x > X_SCREEN || bullets[i].y < 0 || bullets[i].y > Y_SCREEN)
@@ -1905,11 +1932,11 @@ int main()
                                 }
                                 if (especial[i].active)
                                 {
-                                    if (especial[i].x >= vilao2.x && especial[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
-                                        especial[i].y >= vilao2.y && especial[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
+                                    if (especial[i].x >= vilao2->x && especial[i].x <= vilao2->x + al_get_bitmap_width(vilao2->bitmap) &&
+                                        especial[i].y >= vilao2->y && especial[i].y <= vilao2->y + al_get_bitmap_height(vilao2->bitmap))
                                     {
                                         especial[i].active = false; 
-                                        vilao2.hits++;             
+                                        vilao2->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (especial[i].x < 0 || especial[i].x > X_SCREEN || especial[i].y < 0 || especial[i].y > Y_SCREEN)
@@ -1919,11 +1946,11 @@ int main()
                                 }
                                 if (especial2[i].active)
                                 {
-                                    if (especial2[i].x >= vilao2.x && especial2[i].x <= vilao2.x + al_get_bitmap_width(vilao2.bitmap) &&
-                                        especial2[i].y >= vilao2.y && especial2[i].y <= vilao2.y + al_get_bitmap_height(vilao2.bitmap))
+                                    if (especial2[i].x >= vilao2->x && especial2[i].x <= vilao2->x + al_get_bitmap_width(vilao2->bitmap) &&
+                                        especial2[i].y >= vilao2->y && especial2[i].y <= vilao2->y + al_get_bitmap_height(vilao2->bitmap))
                                     {
                                         especial2[i].active = false; 
-                                        vilao2.hits++;             
+                                        vilao2->hits++;             
                                         pontuacao += 3;            
                                     }
                                     if (especial2[i].x < 0 || especial2[i].x > X_SCREEN || especial2[i].y < 0 || especial2[i].y > Y_SCREEN)
@@ -1937,62 +1964,64 @@ int main()
 
                     if(segundos >= 3){
                     
-                        if(tiro_longo_map.active){    al_draw_scaled_bitmap(
-                                tiro_longo_map.bitmap,
+                        if(tiro_longo_map->active){    al_draw_scaled_bitmap(
+                                tiro_longo_map->bitmap,
                                 0, 0,
-                                al_get_bitmap_width(tiro_longo_map.bitmap),
-                                al_get_bitmap_height(tiro_longo_map.bitmap),
-                                tiro_longo_map.x, tiro_longo_map.y,
+                                al_get_bitmap_width(tiro_longo_map->bitmap),
+                                al_get_bitmap_height(tiro_longo_map->bitmap),
+                                tiro_longo_map->x, tiro_longo_map->y,
                                 60, 60, 0);
                             
-                            tiro_longo_map.x -=3;
+                            tiro_longo_map->x -=3;
                         }
                     }
-                    if (tiro_longo_map.active)
+                    if (tiro_longo_map->active)
                     {
-                        if (tiro_longo_map.x + al_get_bitmap_width(tiro_longo_map.bitmap) > x &&
-                            tiro_longo_map.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                            tiro_longo_map.y + al_get_bitmap_height(tiro_longo_map.bitmap) > y &&
-                            tiro_longo_map.y < y + al_get_bitmap_height(sprite.bitmap))
+                        if (tiro_longo_map->x + al_get_bitmap_width(tiro_longo_map->bitmap) > x &&
+                            tiro_longo_map->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                            tiro_longo_map->y + al_get_bitmap_height(tiro_longo_map->bitmap) > y &&
+                            tiro_longo_map->y < y + al_get_bitmap_height(sprite->bitmap))
                         {
-                            tiro_longo_map.active=false;
+                            tiro_longo_map->active=false;
                             pontuacao +=5;
                             tiro_transv = 1;
+                            tiro_longo =1;
                         }
                     }
                     if(segundos == 10){
-                        tiro_longo_map.x = X_SCREEN +80;
-                        tiro_longo_map.active = true;
+                        tiro_longo_map->x = X_SCREEN +80;
+                        tiro_longo_map->active = true;
 
                     }
                     if(segundos >= 3){
                     
-                        if(tiro_longo_map.active){    al_draw_scaled_bitmap(
-                                tiro_longo_map.bitmap,
+                        if(tiro_longo_map->active){    al_draw_scaled_bitmap(
+                                tiro_longo_map->bitmap,
                                 0, 0,
-                                al_get_bitmap_width(tiro_longo_map.bitmap),
-                                al_get_bitmap_height(tiro_longo_map.bitmap),
-                                tiro_longo_map.x, tiro_longo_map.y,
+                                al_get_bitmap_width(tiro_longo_map->bitmap),
+                                al_get_bitmap_height(tiro_longo_map->bitmap),
+                                tiro_longo_map->x, tiro_longo_map->y,
                                 60, 60, 0);
                             
-                            tiro_longo_map.x -=3;
+                            tiro_longo_map->x -=3;
                         }
-                        if(tiro_longo_map.x < 0){
-                            tiro_longo_map.active = false;
+                        if(tiro_longo_map->x < 0){
+                            tiro_longo_map->active = false;
                         }
                     }
 
-                    if (tiro_longo_map.active)
+                    if (tiro_longo_map->active)
                     {
-                        if (tiro_longo_map.x + al_get_bitmap_width(tiro_longo_map.bitmap) > x &&
-                            tiro_longo_map.x < x + al_get_bitmap_width(sprite.bitmap) &&
-                            tiro_longo_map.y + al_get_bitmap_height(tiro_longo_map.bitmap) > y &&
-                            tiro_longo_map.y < y + al_get_bitmap_height(sprite.bitmap))
+                        if (tiro_longo_map->x + al_get_bitmap_width(tiro_longo_map->bitmap) > x &&
+                            tiro_longo_map->x < x + al_get_bitmap_width(sprite->bitmap) &&
+                            tiro_longo_map->y + al_get_bitmap_height(tiro_longo_map->bitmap) > y &&
+                            tiro_longo_map->y < y + al_get_bitmap_height(sprite->bitmap))
                         {
-                            tiro_longo_map.active=false;
+                            tiro_longo_map->active=false;
                             pontuacao +=5;
                             
                             tiro_transv =1;
+                            tiro_longo =1;
                             ppower =4;
                         }
                     }
@@ -2009,8 +2038,8 @@ int main()
                 
                                 if (bullets_inimigos[d].active){
                                     float largura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro
                                     float tiro_x_min = bullets_inimigos[d].x;
@@ -2027,15 +2056,15 @@ int main()
 
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
-                                            sprite.hits++;
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                             bullets_inimigos[d].active = false; // Desativa o tiro
                                     }
                                 }
                                 if (bullets_inimigos2[d].active){
                                     float largura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro
                                     float tiro_x_min = bullets_inimigos2[d].x;
@@ -2052,15 +2081,15 @@ int main()
 
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
-                                            sprite.hits++;
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                             bullets_inimigos2[d].active = false; // Desativa o tiro
                                     }
                                 }
                                 if (tiros_v1[d].active){
                                     float largura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     // Retângulo do tiro
                                     float tiro_x_min = tiros_v1[d].x;
@@ -2077,15 +2106,15 @@ int main()
 
                                     if (tiro_x_max >= sprite_x_min && tiro_x_min <= sprite_x_max &&
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max){
-                                            sprite.hits++;
+                                            sprite->hits++;
                                             pontuacao -= 2;
                                             tiros_v1[d].active = false; 
                                     }
                                 }
                                 if (tiros_v1_2[d].active){
                                     float largura_tiro = 40;
-                                    float largura_sprite = al_get_bitmap_width(sprite.bitmap);
-                                    float altura_sprite = al_get_bitmap_height(sprite.bitmap);
+                                    float largura_sprite = al_get_bitmap_width(sprite->bitmap);
+                                    float altura_sprite = al_get_bitmap_height(sprite->bitmap);
 
                                     float tiro_x_min = tiros_v1_2[d].x;
                                     float tiro_x_max = tiros_v1_2[d].x + largura_tiro;
@@ -2103,7 +2132,7 @@ int main()
                                         tiro_y_max >= sprite_y_min && tiro_y_min <= sprite_y_max)
                                     {
 
-                                        sprite.hits++;
+                                        sprite->hits++;
                                         pontuacao -= 2;
                                         tiros_v1_2[d].active = false; // Desativa o tiro
                                     }
@@ -2137,7 +2166,7 @@ int main()
                 sprintf(pont, "Pontuação: %d", pontuacao);
                 al_draw_text(font, al_map_rgb(255, 255, 255), 10, Y_SCREEN-60, 0, pont);
 
-                
+
                //!  power scalling
                 ALLEGRO_COLOR cor = al_map_rgb(0, 255, 0);
 
@@ -2147,7 +2176,8 @@ int main()
 
                 }
                 //! CONTROLA OS CORAÇÕES
-                int coracoes_num = sprite.hits - 1;
+
+                int coracoes_num = sprite->hits - 1;
                 for (int i = 2; i > coracoes_num; i--)
                 {
                     if (cor1[i].active)
@@ -2161,16 +2191,16 @@ int main()
                             coracao_largura, coracao_altura, 0);
                     }
                 }
-                
+
                 //! controle de tiros da fase 1 
                 if (segundos % 2 == 0 && fase == 1){
                     if(final ==0){
-                        if(Aviao1.active){
-                            atiraInimigo(al_get_bitmap_width(Aviao1.bitmap), al_get_bitmap_height(Aviao1.bitmap), bullets_inimigos, Aviao1.x, Aviao1.y);
+                        if(Aviao1->active){
+                            atiraInimigo(al_get_bitmap_width(Aviao1->bitmap), al_get_bitmap_height(Aviao1->bitmap), bullets_inimigos, Aviao1->x, Aviao1->y);
                         }
-                        if(bomba.active){
-                            atiraInimigo(al_get_bitmap_width(bomba.bitmap), al_get_bitmap_height(bomba.bitmap), bullets_inimigos2, bomba.x, bomba.y);
-                        if(bomba.x == X_SCREEN-200 && bomba_mov < 90){
+                        if(bomba->active){
+                            atiraInimigo(al_get_bitmap_width(bomba->bitmap), al_get_bitmap_height(bomba->bitmap), bullets_inimigos2, bomba->x, bomba->y);
+                        if(bomba->x == X_SCREEN-200 && bomba_mov < 90){
                             bomba_mov = 90;
 
                         }}
@@ -2181,10 +2211,10 @@ int main()
                     (segundos > final_branco2 && segundos <= final_horizontal2) || 
                     (segundos > final_vertical2)) {
                     if (segundos % 3 == 0) {
-                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1_2, vilao1.x, vilao1.y);
-                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1, vilao1.x, vilao1.y + 25);
+                        atiraInimigo(al_get_bitmap_width(vilao1->bitmap), al_get_bitmap_height(vilao1->bitmap), tiros_v1_2, vilao1->x, vilao1->y);
+                        atiraInimigo(al_get_bitmap_width(vilao1->bitmap), al_get_bitmap_height(vilao1->bitmap), tiros_v1, vilao1->x, vilao1->y + 25);
                     } else {
-                        atiraInimigo(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1, vilao1.x, vilao1.y + 25);
+                        atiraInimigo(al_get_bitmap_width(vilao1->bitmap), al_get_bitmap_height(vilao1->bitmap), tiros_v1, vilao1->x, vilao1->y + 25);
                     }
                 }                        
             }
@@ -2193,7 +2223,7 @@ int main()
 
                 if(milisegundos %60 == 0 && fase == 1 && final ==1){
                     if ((segundos > final_branco && segundos < final_com_vertical) || (segundos > final_branco3 && segundos < final_vertical2)){
-                            atiraInimigo_vertical(al_get_bitmap_width(vilao1.bitmap), al_get_bitmap_height(vilao1.bitmap), tiros_v1_vertical, vilao1.x, vilao1.y);
+                            atiraInimigo_vertical(al_get_bitmap_width(vilao1->bitmap), al_get_bitmap_height(vilao1->bitmap), tiros_v1_vertical, vilao1->x, vilao1->y);
                     }
                 }
                 
@@ -2201,35 +2231,35 @@ int main()
                 if (milisegundos %60 == 0 && fase == 2)
                 {
                     if(final ==0){
-                        if(Aviao2.active){
-                            atiraInimigo(al_get_bitmap_width(Aviao2.bitmap), al_get_bitmap_height(Aviao2.bitmap), bullets_inimigos2, Aviao2.x, Aviao2.y+25);
+                        if(Aviao2->active){
+                            atiraInimigo(al_get_bitmap_width(Aviao2->bitmap), al_get_bitmap_height(Aviao2->bitmap), bullets_inimigos2, Aviao2->x, Aviao2->y+25);
 
                         }
-                        if(Aviao3.active){
-                            atiraInimigo(al_get_bitmap_width(Aviao3.bitmap), al_get_bitmap_height(Aviao3.bitmap), tiros_v1, Aviao3.x, Aviao3.y+25);
+                        if(Aviao3->active){
+                            atiraInimigo(al_get_bitmap_width(Aviao3->bitmap), al_get_bitmap_height(Aviao3->bitmap), tiros_v1, Aviao3->x, Aviao3->y+25);
 
                         }
-                        if(Aviao4.active){
-                            atiraInimigo(al_get_bitmap_width(Aviao4.bitmap), al_get_bitmap_height(Aviao4.bitmap), tiros_v1_2, Aviao4.x, Aviao4.y+25);
+                        if(Aviao4->active){
+                            atiraInimigo(al_get_bitmap_width(Aviao4->bitmap), al_get_bitmap_height(Aviao4->bitmap), tiros_v1_2, Aviao4->x, Aviao4->y+25);
                     }
                 }
                 if(final ==1){
                         if ((segundos >= primeira_fase_comeco && segundos <= final_horizontal)|| (segundos > final_branco2 && segundos <= final_horizontal2)||(segundos > final_vertical2)){
                         
-                            atiraInimigo(al_get_bitmap_width(vilao2.bitmap), al_get_bitmap_height(vilao2.bitmap), bullets_inimigos2, vilao2.x, vilao2.y+25);
+                            atiraInimigo(al_get_bitmap_width(vilao2->bitmap), al_get_bitmap_height(vilao2->bitmap), bullets_inimigos2, vilao2->x, vilao2->y+25);
                         }
                         if ((segundos > final_branco && segundos <= final_com_vertical)){
-                            atiraInimigo(al_get_bitmap_width(vilao2.bitmap), al_get_bitmap_height(vilao2.bitmap), tiros_v1, vilao2.x, vilao2.y+25);
+                            atiraInimigo(al_get_bitmap_width(vilao2->bitmap), al_get_bitmap_height(vilao2->bitmap), tiros_v1, vilao2->x, vilao2->y+25);
 
-                            atiraInimigo_verticalv2(al_get_bitmap_width(vilao2.bitmap), al_get_bitmap_height(vilao2.bitmap), tiros_v1_vertical, vilao2.x, vilao2.y);
-                            atiraInimigo_verticalv2(al_get_bitmap_width(vilao2.bitmap), al_get_bitmap_height(vilao2.bitmap), bullets_inimigos, vilao2.x, vilao2.y);
+                            atiraInimigo_verticalv2(al_get_bitmap_width(vilao2->bitmap), al_get_bitmap_height(vilao2->bitmap), tiros_v1_vertical, vilao2->x, vilao2->y);
+                            atiraInimigo_verticalv2(al_get_bitmap_width(vilao2->bitmap), al_get_bitmap_height(vilao2->bitmap), bullets_inimigos, vilao2->x, vilao2->y);
                         }}
 
                 }
                 if (tiro_transv == 1) {
-                    atira(sprite_width, sprite_height, especial2, x, y);
-                    atira(sprite_width, sprite_height, especial, x, y);
 
+                    atira(sprite_width, sprite_height, especial2, x, y);
+                    atira(sprite_width, sprite_height, especial, x, y);                
 
                     ctln_transversal++;
                     if (ctln_transversal == 10 || ctln_transversal == 60 || ctln_transversal == 120 || ctln_transversal == 180) {
@@ -2238,8 +2268,33 @@ int main()
 
                     if (ctln_transversal >= 180) { 
                         tiro_transv = 0;
+                        ctln_transversal =0;
                     }
                 }
+
+                
+                al_draw_bitmap(auxiliar1->bitmap, x_auxiliar1, y_auxiliar1,0);
+            
+                if(tiro_longo ==1){
+
+                    atira(sprite_width, sprite_height, especial2, x_auxiliar1, y_auxiliar1);
+                    atira(sprite_width, sprite_height, especial, x_auxiliar1, y_auxiliar1);                
+
+                    x_auxiliar1+=5;
+                    
+                    if(x_auxiliar1 >=50){
+                        ctln_longo++;
+                        if (ctln_longo == 10 || ctln_longo == 60 || ctln_longo == 120 || ctln_longo == 180) {
+                            
+                        }
+
+                        if (ctln_longo >= 180) { 
+                            tiro_longo = 0;
+                            ctln_longo =0;
+                        }
+                    }
+                }
+                
                 al_flip_display();
 
                 al_rest(0.01);
@@ -2248,7 +2303,7 @@ int main()
         }
         else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         {
-            sprite.hits =0;
+            sprite->hits =0;
             running = false;
         }
         else if (event.type == ALLEGRO_EVENT_KEY_DOWN)
@@ -2290,6 +2345,7 @@ int main()
         }
     }
 
+    
     for(int g =0; g<5; g++){
     al_destroy_bitmap(especial2[g].bitmap);
     al_destroy_bitmap(especial[g].bitmap);
@@ -2299,21 +2355,32 @@ int main()
     al_destroy_bitmap(bullets_inimigos[g].bitmap);
     al_destroy_bitmap(tiros_v1_vertical[g].bitmap);
     }
+    al_destroy_bitmap(tiro_longo_map->bitmap);
     al_destroy_bitmap(zurc);
     al_destroy_bitmap(zurc_icon);
     al_destroy_bitmap(fundo);
     al_destroy_bitmap(cor1[0].bitmap);
     al_destroy_bitmap(cor1[1].bitmap);
     al_destroy_bitmap(cor1[2].bitmap);
-    al_destroy_bitmap(vilao1.bitmap);
-    al_destroy_bitmap(vilao2.bitmap);
-    al_destroy_bitmap(sprite.bitmap);
-    al_destroy_bitmap(bomba.bitmap);
-    al_destroy_bitmap(Aviao1.bitmap);
+    al_destroy_bitmap(vilao1->bitmap);
+    al_destroy_bitmap(vilao2->bitmap);
+    al_destroy_bitmap(sprite->bitmap);
+    al_destroy_bitmap(bomba->bitmap);
+    al_destroy_bitmap(Aviao1->bitmap);
     al_destroy_font(font);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
     al_destroy_display(display);
-
+    free(Aviao1);
+    free(Aviao2);
+    free(Aviao3);
+    free(Aviao4);
+    free(vilao1);
+    free(bomba);
+    free(bomba2);
+    free(vilao2);
+    free(sprite);
+    free(auxiliar1);
+    free(tiro_longo_map);
     return 0;
 }
